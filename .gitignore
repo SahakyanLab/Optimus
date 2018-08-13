@@ -5,4 +5,7 @@
 # ignore these directories with all the files within
 exper/
 Optimus/Manuscript/
-
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
