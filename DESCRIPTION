@@ -1,0 +1,22 @@
+Package: Optimus
+Type: Package
+Title: General purpose adaptive optimisation engine
+Version: 0.1.0
+Author: Nicholas Andre G. Johnson and Aleksandr Sahakyan
+Maintainer: Sahakyan Lab <aleksahak@cantab.net>
+Description: This package is a general purpose optimisation engine.
+    It supports Monte Carlo Optimisation with Metropolis Criterion
+    and Acceptance Ratio Annealing on multiple cores, and it supports
+    Acceptance Ratio Replica Exchange Monte Carlo Optimisation. In each
+    case, the system pseudo-temperature is dynamically adjusted such
+    the observed acceptance ratio is very near to the actual
+    acceptance ratio.
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Imports:
+    doParallel (>= 1.0.11),
+    foreach (>= 1.4.4),
+    iterators (>= 1.0.9),
+    parallel (>= 3.5.1)
+RoxygenNote: 6.0.1
