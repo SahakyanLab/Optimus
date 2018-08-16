@@ -1,7 +1,7 @@
 ---
 title: "Optimus - Tutorial 2"
 author: "Nicholas Andre G. Johnson and Aleksandr B. Sahakyan"
-date: "7 August 2018"
+date: "16 August 2018"
 output:
   pdf_document: default
   html_document:
@@ -51,9 +51,9 @@ $$
 
 where each $k_i$ is a binary variable (meaning a variable taking a value of either 0 or 1) indicating whether the $i^{th}$ term is included in the representation, each $c_i$ is a non-zero coefficient for the $i^{th}$ term and b is a real number (the intercept). In our case, $\mathbf{card}(terms) = 30$ so explicitly, our model is:
 
-$b+k_1c_1x+k_2c_2x^2+k_3c_3x^3+k_4c_4x^4+k_5c_5x^5+k_6c_6x^6+k_7c_7x^7+k_8c_8x^8+k_9c_9x^9+k_{10}c_{10}x^{10}+k_{11}c_{11}e^x+k_{12}c_{12}|x|+k_{13}c_{13}six(x)+k_{14}c_{14}cos(x)+k_{15}c_{15}tan(x)+k_{16}c_{16}sin(x)cos(x)+k_{17}c_{17}sin^2(x)+k_{18}c_{18}cos^2(x)+k_{19}c_{19}sin(x^2)+k_{20}c_{20}sin(x^3)+k_{21}c_{21}cos(x^2)+k_{22}c_{22}cos(x^3)+k_{23}c_{23}sin(x^3)cos(-x)+k_{24}c_{24}cos(x^3)sin(-x)+k_{25}c_{25}sin(x^5)cos(-x)+k_{26}c_{26}cos(x^5)sin(-x)+k_{27}c_{27}e^xsin(x)+k_{28}c_{28}e^xcos(x)+k_{29}c_{29}|x|sin(x)+k_{30}c_{30}|x|cos(x)$
+$y = b+k_1c_1x+k_2c_2x^2+k_3c_3x^3+k_4c_4x^4+k_5c_5x^5+k_6c_6x^6+k_7c_7x^7+k_8c_8x^8+k_9c_9x^9+k_{10}c_{10}x^{10}+k_{11}c_{11}e^x+k_{12}c_{12}|x|+k_{13}c_{13}six(x)+k_{14}c_{14}cos(x)+k_{15}c_{15}tan(x)+k_{16}c_{16}sin(x)cos(x)+k_{17}c_{17}sin^2(x)+k_{18}c_{18}cos^2(x)+k_{19}c_{19}sin(x^2)+k_{20}c_{20}sin(x^3)+k_{21}c_{21}cos(x^2)+k_{22}c_{22}cos(x^3)+k_{23}c_{23}sin(x^3)cos(-x)+k_{24}c_{24}cos(x^3)sin(-x)+k_{25}c_{25}sin(x^5)cos(-x)+k_{26}c_{26}cos(x^5)sin(-x)+k_{27}c_{27}e^xsin(x)+k_{28}c_{28}e^xcos(x)+k_{29}c_{29}|x|sin(x)+k_{30}c_{30}|x|cos(x)$
 
-Formally, K will be a numeric vector of length $\mathbf{card}(terms)$ whose $i^{th}$ entry is $k_i$. K uniquely specifies a set $activeTerms = \{terms_i \:\forall \:i \:| k_i = 1 \}$. Note that $activeTerms \subseteq terms$. Each binary variable $k_i$ should be initialized randomly as below:
+Formally, $K$ will be a numeric vector of length $\mathbf{card}(terms)$ whose $i^{th}$ entry is $k_i$. $K$ uniquely specifies a set $activeTerms = \{terms_i \:\forall \:i \:| k_i = 1 \}$. Note that $activeTerms \subseteq terms$. Each binary variable $k_i$ should be initialized randomly as below:
 
 
 ```{r, tidy=FALSE, echo=TRUE, eval=TRUE}
@@ -89,7 +89,7 @@ K <- c(term1=rbinom(n=1, size=1, prob=0.5),
        term30=rbinom(n=1, size=1, prob=0.5))
 ```
 
-Next, we must define the model function m that will operate on the parameter snapshot K and return an observable object O. For a given set $activeTerms$ specified by K, m() will fit a linear model to the data using the entries in $activeTerms$ and using the built in generalized linear model (glm()) function in R, thereby determining values for the variables $c_i$. Accordingly, m() will require access to the variables x and y, which will be provided as entries in DATA, a variable of type list, as in Tutorial 1. The object O will be the corresponding output of the function glm(). In the case that the set $activeTerms$ is the empty set (meaning that all entries in K are 0), m() will fit a model using the relationship y~x.
+Next, we must define the model function $m$ that will operate on the parameter snapshot $K$ and return an observable object $O$. For a given set $activeTerms$ specified by $K$, $m()$ will fit a linear model to the data using the entries in $activeTerms$ and using the built in generalized linear model ($glm()$) function in R, thereby determining values for the variables $c_i$ and $b$. Accordingly, $m()$ will require access to the variables $x$ and $y$, which will be provided as entries in DATA, a variable of type list, as in Tutorial 1. The object $O$ will be the corresponding output of the function $glm()$. In the case that the set $activeTerms$ is the empty set (meaning that all entries in $K$ are 0), $m()$ will fit a model using the relationship y~x.
 
 ```{r, tidy=FALSE, echo=TRUE, eval=TRUE}
 DATA   <- NULL
@@ -144,7 +144,7 @@ m <- function(K, DATA){
 }
 ```
 
-Having defined the function m, we can now proceed to define the function u which will define how well a given configuration of parameters K is performing by operating on the observable object O ouputted by m() and on the variable DATA. Here, to quantify (and thus be able to compare) the desirability of a given model for the data, we will employ the Aikake Information Criterion ($AIC$) from Information Theory, defined as follows where $p$ is the number of parameters in the fitted model $M$ and $L$ is the likelihood of the model given the data:
+Having defined the function $m$, we can now proceed to define the function $u$, which will define how well a given configuration of parameters $K$ is performing by operating on the observable object $O$ outputted by $m()$ and on the variable DATA. Here, to quantify (and thus be able to compare) the desirability of a given model for the data, we will employ the Aikake Information Criterion ($AIC$) from Information Theory, defined as follows where $p$ is the number of parameters in the fitted model $M$ and $L$ is the likelihood of the model given the data:
 
 $$
 AIC(M) = 2p - 2ln(L)
@@ -152,7 +152,7 @@ $$
 
 The target representation will be the fitted model $M$ (whose terms are elements of $terms$) that minimizes the $AIC$. It is important to note that the $2p$ term in the $AIC$ penalizes overfitting by increasing $AIC$ as function of the number of parameters while the $-2ln(L)$ term rewards models that better represent the data by decreasing $AIC$ as a function of the likelihood of the model.
 
-As articulated in Tutorial 1, the output of u() should have a component E holding a pseudo-energy for the parameter snapshot K and a component Q that can be used for plotting the optimisation process. In this case, E will be equal to the value of $AIC$ (implemented using the built in AIC() function in R) and Q will be equal to the RMSD between the predicted values of y from the fitted model and the actual y values. Consequently, u() will need access to the variable y. The definition of u() is below:
+As articulated in Tutorial 1, the output of $u()$ should have a component $E$ holding a pseudo-energy for the parameter snapshot $K$ and a component $Q$ that can be used for plotting the optimisation process. In this case, $E$ will be equal to the value of $AIC$ (implemented using the built in $AIC()$ function in R) and $Q$ will be equal to the RMSD between the predicted values of $y$ from the fitted model and the actual $y$ values. Consequently, $u()$ will need access to the variable $y$. The definition of $u()$ is below:
 
 ```{r, tidy=TRUE, echo=TRUE, eval=TRUE}
 u <- function(O, DATA){
@@ -168,7 +168,7 @@ u <- function(O, DATA){
 }
 ```
 
-Finally, we need to define the rule function r. We will adopt the following simply procedure: randomly select an entry in K and switch its value to the other binary value. 
+Finally, we need to define the rule function $r$. We will adopt the following simply procedure: randomly select an entry in $K$ and switch its value to the other binary value. 
 
 ```{r, tidy=TRUE, echo=TRUE, eval=TRUE}
 r <- function(K){
@@ -186,11 +186,11 @@ r <- function(K){
 ```
 Having defined all the necessary inputs, we are now ready to call Optimus.
 
-An important remark is that modelling this problem in this manner results in an objective function ($AIC$) that is not smooth because small changes in the parameter set K (as defined by r()) can have significantly large changes on the objective because an entirely different model is being used to fit the data. Despite this, we will see that Optimus arrives at good solutions largely as a consequence of its adaptive thermoregulation. Whereas other optimisation procedures don't work or do poorly in such situations (non smooth objective function), Optimus will get the job done.
+An important remark is that modelling this problem in this manner results in an objective function ($AIC$) that is not smooth because small changes in the parameter set $K$ (as defined by $r()$) can produce significantly large changes in the objective value because an entirely different model is being used to fit the data. Despite this, we will see that Optimus arrives at good solutions largely as a consequence of its adaptive thermoregulation. Whereas other optimisation procedures don't work or do poorly in such situations (non smooth objective function), Optimus will get the job done.
 
 ## Acceptance Ratio Annealing Optimus Run
 
-In addition to the inputs defined above, Optimus can optionally take other inputs to dictate the optimisation process (see the Advanced User Manual), all of which have built in default values and some of which will be altered in this example due to the increased computational complexity of the model defined in this Tutorial compared to Tutorial 1. The variable NUMITER represents the number of iterations of the optimisation process (per core) and has a default value of 1 000 000. For this example, 200 000 iterations will be used to reduce the running time of Optimus given that each iteration is more computationally demanding than in Tutorial 1. The variable CYCLES (unique to Acceptance Ratio Annealing Optimus) denotes the number of acceptance ratio annealing cycles. It's default value is 10, however it will be set to 2 in this example so that each annealing cycle has 100 000 iterations just as in Tutorial 1 (the number of iterations per cycle is calculated as NUMITER/CYCLES). Lastly, the variable DUMP.FREQ, the frequency (in iterations) with which the best found model is outputted by the function will be set to 100 000 (it's default value is 10 000).
+In addition to the inputs defined above, Optimus can optionally take other inputs to dictate the optimisation process (see the Advanced User Manual), all of which have built in default values and some of which will be altered in this example due to the increased computational complexity of the model defined in this Tutorial compared to that of Tutorial 1. The variable NUMITER represents the number of iterations of the optimisation process (per core) and has a default value of 1 000 000. For this example, 200 000 iterations will be used to reduce the running time of Optimus given that each iteration is more computationally demanding than in Tutorial 1. The variable CYCLES (unique to Acceptance Ratio Annealing Optimus) denotes the number of acceptance ratio annealing cycles. Its default value is 10, however it will be set to 2 in this example so that each annealing cycle has 100 000 iterations just as in Tutorial 1 (the number of iterations per cycle is calculated as NUMITER/CYCLES). Lastly, the variable DUMP.FREQ, the frequency (in iterations) with which the best found model is outputted by the function, will be set to 100 000 (its default value is 10 000).
 
 Let us again investigate the Simulated Annealing (SA) version of Optimus on 4 processors, which can be executed as follows:
 
@@ -225,13 +225,13 @@ Thus, the optimal functional representation found by Optimus has the following f
 $$
 y = b+c_2x^2+c_3x^3+c_4x^4+c_{11}e^x+c_{20}sin(x^3)+c_{26}cos(x^5)sin(-x)
 $$
-Below is the explicit representation after determing the coefficients $c_i$:
+Below is the explicit representation after determing the coefficients $c_i$ and $b$:
 
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
 m(solution,DATA)
 ```
 
-Notice that the solution selected by Optimus results in an RMSD of $28.693$ which is lower than the RMSD of the Least Squares Solution ($28.82655$) which assumes the appropriate model is $k_1x+k_2x^2+k_3x^3+k_4x^4$. Optimus selected a model which does not include all terms from the form used to generate the data. If a user were concerned by the fact that the model Optimus selected contains more terms ($6$) than are used in the representation of the de-noised data ($4$), the user could either increase the multiplicative factor associated with the term $p$ in the $AIC$ to more strongly penalizes representations involving a greater number of parameters. Alternatively, the user could also modify the function r() to ensure that only a fixed number of terms are ever active.
+Notice that the solution selected by Optimus results in an RMSD of $28.693$ which is lower than the RMSD of the Least Squares Solution ($28.82655$) which assumes the appropriate model is $k_1x+k_2x^2+k_3x^3+k_4x^4$. Optimus selected a model which does not include all terms from the form used to generate the data. If a user were concerned by the fact that the model Optimus selected contains more terms ($6$) than are used in the representation of the de-noised data ($4$), the user could either increase the multiplicative factor associated with the term $p$ in the $AIC$ to more strongly penalize representations involving a greater number of parameters. Alternatively, the user could also modify the function r() to ensure that only a fixed number of terms are ever active.
 
 Let us now take a look at how the Temeperature Control Unit performed given this highly non-smooth objective. The graphs below should now feel very familiar, they represent data taken from the last 20 000 iterations of the optimisation protocol executed by Processor 1.
 
@@ -254,7 +254,7 @@ plot(main="Observed Acceptance Ratio (Processor 1)", y=IDEAL.ACC.VEC[STEP.STORED
 lines(y=ACC.VEC.DE.FACTO, x=STEP4ACC.VEC.DE.FACTO, ylim=c(0,100), xlim=range(STEP.STORED), col="red", lwd=2)
 ```
 
-Despite optimising a completely different model with a non-smooth objective function, the TCU succeeds in dynamically adjusting the system pseudo-temperature such that the observed acceptance ratio follows the annealing schedule closely.
+Despite optimising a completely different model with a non-smooth objective function, the TCU succeeds in dynamically adjusting the system pseudo-temperature such that the observed acceptance ratio follows the annealing schedule rather well.
 
 ## Replica Exchange Optimus Run
 
@@ -262,14 +262,14 @@ Let us now consider the Replica Exchange version of Optimus on 12 processors wit
 ```{r, tidy=TRUE, echo=TRUE, eval=TRUE}
 ACCRATIO <- c(90, 82, 74, 66, 58, 50, 42, 34, 26, 18, 10, 2)
 ```
-As in the Acceptance Ratio Annealing run above, we will again execute the optimisation procedure for 200 000 iterations. The Replica Exchange version of Optimus takes an input argument EXCHANGE.FREQ (default value 1000) which specifies the total number of exchanges that will occur during the optimisation process. Consequently, the number of optimisation iterations that occur between subsequent exchanges between replicas can be calculated as ```{r, tidy=TRUE, echo=TRUE, eval=FALSE} NUMITER / EXCHANGE.FREQ ```, which is 200 iterations in this case.
+As in the Acceptance Ratio Annealing run above, we will again execute the optimisation procedure for 200 000 iterations. The Replica Exchange version of Optimus takes an input argument EXCHANGE.FREQ (default value 1000) which specifies the total number of exchanges that will occur during the optimisation process. Consequently, the number of optimisation iterations that occur between subsequent exchanges between replicas can be calculated as $NUMITER / EXCHANGE.FREQ$, which is 200 iterations in this case.
 
-Here we will set the input parameter STATWINDOW to have value 50 (it's default value is 70). This signifies that the TCU will update the system pseudo-temperature once every 50 iterations on each optimisation replica. This guarantees that 4 temperature adjustments will be made if a given replica is involved in two subsequent exchanges (bnecause the number of iterations between exchanges is 200, as explained in the preceding paragraph) as opposed to merely 2 adjustments which would be the case if STATWINDOW were left to take is default value and could result in poor agreement between the observed acceptance ratio of the replica in question and the target acceptance ratio. The following line executes Optimus with the above specified inputs:
+Here we will set the input parameter STATWINDOW to have value 50 (its default value is 70). This signifies that the TCU will update the system pseudo-temperature once every 50 iterations on each optimisation replica. This guarantees that 4 temperature adjustments will be made if a given replica is involved in two subsequent exchanges (because the number of iterations between exchanges is 200, as explained in the preceding paragraph) as opposed to merely 2 adjustments which would be the case if STATWINDOW were left to take its default value and could result in poor agreement between the observed acceptance ratio of the replica in question and the target acceptance ratio. The following line executes Optimus with the above specified inputs:
 
 ```{r, tidy=TRUE, echo=TRUE, eval=FALSE}
 Optimus(NCPU = 12, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, ACCRATIO = ACCRATIO, OPT.TYPE = "RE", DATA = DATA, OPTNAME = "term_12_RE", NUMITER = 200000, STATWINDOW = 50, DUMP.FREQ = 100000, LONG = FALSE)
 ```
-9 of the optimisation replicas (Processors 1, 2, 3, 5, 6, 8, 9, 10 and 12) recovered the same solution that was found by the Acceptance Ratio Annealing Optimus run. Moreover, this solution is better (lower $AIC$) than those recovered by Processors 4, 7 and 11. Thus, in this example, the Acceptance Ratio Annealing and Replica Exchange versions produce the same solution.
+Nine of the optimisation replicas (Processors 1, 2, 3, 5, 6, 8, 9, 10 and 12) recovered the same solution that was found by the Acceptance Ratio Annealing Optimus run. Moreover, this solution is better (lower $AIC$) than those recovered by Processors 4, 7 and 11. Thus, in this example, the Acceptance Ratio Annealing and Replica Exchange versions produce the same solution.
 
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
 solution <- c(0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0)
@@ -293,7 +293,7 @@ library(knitr)
 kable(data, caption = "12 Core Replica Exchange Optimus Run Results")
 ```
 
-Note that various replica outcomes illustrate the penalizing affects of the $AIC$ on models using a greater number of parameters. Consider the solutions found by the 66% acceptance ratio replica and the 58% acceptance ratio replica (Processors 4 and 5 respectively). Let $y_i$ denote the solution found by Processor $i$. Then, we have:
+Note that the various replica outcomes illustrate the penalizing effects of the $AIC$ on models using a greater number of parameters. Consider the solutions found by the 66% acceptance ratio replica and the 58% acceptance ratio replica (Processors 4 and 5 respectively). Let $y_i$ denote the solution found by Processor $i$. Then, we have:
 
 $$
 y_4 = b+c_2x^2+c_3x^3+c_4x^4+c_{11}e^x+k_{13}c_{13}six(x)+c_{20}sin(x^3)+c_{26}cos(x^5)sin(-x)
@@ -323,7 +323,7 @@ plot(main="Observed Acceptance Ratio (Processor 5 - 58% Acceptance Ratio)", y=re
 lines(y=ACC.VEC.DE.FACTO, x=STEP4ACC.VEC.DE.FACTO, ylim=c(0,100), xlim=range(STEP.STORED), col="red", lwd=2)
 ```
 
-The above graphs are produced using data from the last 20 000 iterations of the 58% acceptance ratio replica (Processor 5). It is clear that the observed acceptance ratio more strongly oscillated around the target acceptance ratio than was the case in the Acceptance Ration Annealing run from the previous part of this tutorial. More generally, it should be expected that the observed acceptance ratio fluctuates more significantly around the target acceptance ratio in Replica Exchange than in Acceptance Ratio Annealing, especially when the objective function is non-smooth as is the case in this example. This is because an exchange between two replicas has the same effect as restarting a Monte Carlo optimisation from a random initial configuration with a temperature that very likely is not conducive to the target acceptance ratio for the given configuration. As such, each time an exchange occurs, significant deviations from the target acceptance ratio may occur and may require several STATWINDOWs for the TCU to correct. Despite this challenge, the TCU performs satisfactorily.
+The above graphs are produced using data from the last 20 000 iterations of the 58% acceptance ratio replica (Processor 5). It is clear that the observed acceptance ratio more strongly oscillated around the target acceptance ratio than was the case in the Acceptance Ratio Annealing run from the previous part of this tutorial. More generally, it should be expected that the observed acceptance ratio fluctuates more significantly around the target acceptance ratio in Replica Exchange than in Acceptance Ratio Annealing, especially when the objective function is non-smooth as is the case in this example. This is because an exchange between two replicas has the same effect as restarting a Monte Carlo optimisation from a random initial configuration with a temperature that very likely is not conducive to the target acceptance ratio for the given configuration. As such, each time an exchange occurs, significant deviations from the target acceptance ratio may occur and may require several STATWINDOWs for the TCU to correct. Despite this challenge, the TCU performs satisfactorily.
 
 ## Summary
 
