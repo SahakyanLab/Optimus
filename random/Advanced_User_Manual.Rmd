@@ -1,7 +1,7 @@
 ---
 title: "Advanced User Manual"
 author: "Nicholas Andre G. Johnson and Aleksandr B. Sahakyan"
-date: "9 August 2018"
+date: "16 August 2018"
 output: pdf_document
 ---
 
@@ -41,23 +41,23 @@ Optimus <- function(NUMITER       = 1000000,
 
 # Mandatory Input Arguments
 
-All mandatory input arguments have necessarily already been defined in the Tutorials. However, we will reiterate these definitions in this section.Optimus has four mandatory inputs, mDEF, uDEF, rDEF (refer to as m(), u() and r() respectively in the Tutorials) and K.INITIAL.
+All mandatory input arguments have necessarily already been defined in the Tutorials. However, we will reiterate these definitions in this section.Optimus has four mandatory inputs, mDEF, uDEF, rDEF (refered to as $m()$, $u()$ and $r()$ respectively in the Tutorials) and K.INITIAL.
 
 ### mDEF
 
-mDEF must be of type closure. mDEF should be a function designed to operate on the whole set of parameter snapshot K and return the corresponding observable object O. Please note, that the size of K and O are not necessarily to match, depending on the nature of the model used. mDEF must necessarily take K and DATA as input variables, and it must necessarily operate on K to produce O (operating on DATA in optional, see Tutorial 3 for an illustration).
+mDEF must be of type closure. mDEF should be a function designed to operate on the whole set of parameter snapshot $K$ and return the corresponding observable object $O$. Please note, that the size of $K$ and $O$ are not necessarily to match, depending on the nature of the model used. mDEF must necessarily take K and DATA as input variables, and it must necessarily operate on $K$ to produce $O$ (operating on DATA in optional, see Tutorial 3 for an illustration).
 
 ### uDEF
 
-uDEF must be of type closure. uDEF should be a function designed to evaluate the performance of a given snapshot of coefficients K. uDEF  which should necessarily take as inputs O (the output of mDEF) and the variable DATA. The output of uDEF should have two components, Q holding a single number of the quality of the K coefficients, and E holding a (pseudo)energy for the given snapshot K. It is important that the returned (pseudo)energy value is lower for better performance/version of K, nevere vice-versa. The Q component of the uDEF function output is only used for plotting the optimisation process, and, if desired, can just repeat the value of the E component.
+uDEF must be of type closure. uDEF should be a function designed to evaluate the performance of a given snapshot of coefficients $K$. uDEF should necessarily take as inputs $O$ (the output of mDEF) and the variable DATA. The output of uDEF should have two components, $Q$ holding a single number of the quality of the $K$ coefficients, and $E$ holding a (pseudo)energy for the given snapshot $K$. It is important that the returned (pseudo)energy value is lower for better performance/version of $K$, never vice-versa. The $Q$ component of the uDEF function output is only used for plotting the optimisation process, and, if desired, can just repeat the value of the $E$ component.
 
 ### rDEF
 
-rDEF must be of type closure. rDEF should be a function that defines a rule by which the K coefficient vector is to be altered from one step to another. rDEF must accept K as an input and return an object equivalent to K, but with some alteration(s).
+rDEF must be of type closure. rDEF should be a function that defines a rule by which the $K$ coefficient vector is to be altered from one step to another. rDEF must accept $K$ as an input and return an object equivalent to $K$, but with some alteration(s).
 
 ### K.INITIAL
 
-K.INITIAL is an object of any tupe which stores the initial values for the parameter(s) to be The only requirement for K is that it should be something alterable via rDEF and something that influences the outcome of mDEF.
+K.INITIAL is an object of any type which stores the initial values for the parameter(s) to be optimised. The only requirement for $K$ is that it should be something alterable via rDEF and something that influences the outcome of mDEF.
 
 # Optional Input Arguments
 
@@ -131,7 +131,7 @@ OPTNAME is a variable of type character that can be thought of as the name of th
 
 ### DATA
 
-DATA is a variable of type list holding any additional data that must be accessed by mDEF and uDEF. The default value fro DATA is NULL.
+DATA is a variable of type list holding any additional data that must be accessed by mDEF and uDEF. The default value for DATA is NULL.
 
 ### OPT.TYPE
 
@@ -179,7 +179,7 @@ Note that the 5th file is only produced if LIVEPLOT = TRUE. As an illustration, 
 
 ### [OPTNAME][Core number]_model_ALL
 
-This is the most important output file in that the essentially all contents from the other output files is contained in this file. The *_model_ALL file is an R workspace that contains a variable OUTPUT of type list. For Acceptance Ratio Annealing, OUTPUT has 12 fields (numbered 1-12 below) while for Replica Exchange, OUTPUT contains an additional 14 fields (numbered 13-26 below). Note that the additional fields of OUTPUT in Replica Exchange were included to facilitate the writing of the code; they can largely be ignored by the user.
+This is the most important output file in that essentially all contents from the other output files is contained in this file. The *_model_ALL file is an R workspace that contains a variable OUTPUT of type list. For Acceptance Ratio Annealing, OUTPUT has 12 fields (numbered 1-12 below) while for Replica Exchange, OUTPUT contains an additional 14 fields (numbered 13-26 below). Note that the additional fields of OUTPUT in Replica Exchange were included to facilitate the writing of the code; they can largely be ignored by the user.
 
 1) K.stored
 2) O.stored
@@ -208,21 +208,21 @@ This is the most important output file in that the essentially all contents from
 25) new.T.INI
 26) instanceOFswitch
 
-K.stored holds the optimal parameter configuration found by the given processor. O.stored holds the object O generated by mDEF from the optimal parameter configuration K.stored. STEP is a double that holds the current optimisation iteration number. PROB.VEC is a vector that holds the acceptance probability for each optimisation step. T.DE.FACTO is a vector that holds the system pseudo-temperature during each optimisation iteration. IDEAL.ACC.VEC is a vector that holds the target acceptance ratio for each optimisation iteration in the case of Acceptance Ratio Annealing. In the case of Replica Exchange, IDEAL.ACC.VEC holds the same value as the input variable ACCRATIO. ACC.VEC.DE.FACTO is a vector that holds the observed acceptance ratio at the end of each STATWINDOW. STEP4ACC.VEC.DE.FACTO is a vector that holds the optimisation step numbers that correspond to the end of a STATWINDOW. ENERGY.DE.FACTO is a vector that holds the actual system energy E at each optimisation step. Q.STRG is a vector that holds the system quality Q at each optimisation step. ACCEPTANCE is a vector of binary variables whose $i^{th}$ entry is 1 if the candidate parameter configuration was accepted on the $i^{th}$ optimisation step and 0 otherwise. STEP.STORED is a vector storing the number of each optimisation step.
+K.stored holds the optimal parameter configuration found by the given processor. O.stored holds the object $O$ generated by mDEF from the optimal parameter configuration K.stored. STEP is a double that holds the current optimisation iteration number. PROB.VEC is a vector that holds the acceptance probability for each optimisation step. T.DE.FACTO is a vector that holds the system pseudo-temperature during each optimisation iteration. IDEAL.ACC.VEC is a vector that holds the target acceptance ratio for each optimisation iteration in the case of Acceptance Ratio Annealing. In the case of Replica Exchange, IDEAL.ACC.VEC holds the same value as the input variable ACCRATIO. ACC.VEC.DE.FACTO is a vector that holds the observed acceptance ratio at the end of each STATWINDOW. STEP4ACC.VEC.DE.FACTO is a vector that holds the optimisation step numbers that correspond to the end of a STATWINDOW. ENERGY.DE.FACTO is a vector that holds the actual system energy $E$ at each optimisation step. Q.STRG is a vector that holds the system quality $Q$ at each optimisation step. ACCEPTANCE is a vector of binary variables whose $i^{th}$ entry is 1 if the candidate parameter configuration was accepted on the $i^{th}$ optimisation step and 0 otherwise. STEP.STORED is a vector storing the number of each optimisation step.
 
-E.stored is a double that stores the energy E associated with the optimal parameter configuration K.stored. E.old is a double that stores the energy E associated with the most recently considered parameter configuration. Q.old is a double that stores the quality Q associated with the most recently considered parameter configuration. K hold the most recently considered parameter configuration. T is a double that holds the current system temperature. Step.stored is a double that holds the optimisation step number on wich the optimal parameter configuration K.stored was discovered. ENERGY.TRIAL.VEC is a vector that holds the energy E of the candidate parameter configuration at every optimisation step. STEP.add is a double that facilitates indexing into output vectors. NumofAccRatSMIdeal is a double that represents the number of times the observed acceptance ratio has sequentially been smaller than the target acceptance ratio. NumofAccRatGRIdeal is a double that represents the number of times the observed acceptance ratio has been sequentially greater than the target acceptance ratio. t.adjstep is a double holding the current value by which the system pseudo-temperature is increased or decreased each STATWINDOW by the Temperature Control Unit. AccR.category is a character that indicates whether the observed acceptance ratio was above or below the target acceptance ratio during the previous STATWINDOW. new.T.INI is a double that stores an estimate for the ideal initial system pseudo-temperature deduced by the Temperature Control Unit. Finally, instanceOFswitch is a double that tracks the number of times the observed acceptance ratio has transitioned from being less than the target to ratio to greater than the target ratio or vice versa.
+E.stored is a double that stores the energy $E$ associated with the optimal parameter configuration K.stored. E.old is a double that stores the energy $E$ associated with the most recently considered parameter configuration. Q.old is a double that stores the quality $Q$ associated with the most recently considered parameter configuration. $K$ hold the most recently considered parameter configuration. $T$ is a double that holds the current system temperature. Step.stored is a double that holds the optimisation step number on which the optimal parameter configuration K.stored was discovered. ENERGY.TRIAL.VEC is a vector that holds the energy $E$ of the candidate parameter configuration at every optimisation step. STEP.add is a double that facilitates indexing into output vectors. NumofAccRatSMIdeal is a double that represents the number of times the observed acceptance ratio has sequentially been smaller than the target acceptance ratio. NumofAccRatGRIdeal is a double that represents the number of times the observed acceptance ratio has been sequentially greater than the target acceptance ratio. t.adjstep is a double holding the current value by which the system pseudo-temperature is increased or decreased each STATWINDOW by the Temperature Control Unit. AccR.category is a character that indicates whether the observed acceptance ratio was above or below the target acceptance ratio during the previous STATWINDOW. new.T.INI is a double that stores an estimate for the ideal initial system pseudo-temperature deduced by the Temperature Control Unit. Finally, instanceOFswitch is a double that tracks the number of times the observed acceptance ratio has transitioned from being less than the target ratio to greater than the target ratio or vice versa.
 
 ### [OPTNAME][Core number]_model_K
 
-The *_model_K file is an R workspace that contains a variable K.stored of the same type as K.INITTIAL. It holds the optimal parameter configuration found by the given processor.
+The *_model_K file is an R workspace that contains a variable K.stored of the same type as K.INITIAL. It holds the optimal parameter configuration found by the given processor.
 
 ### [OPTNAME][Core number]_model_O
 
-The *_model_O file is an R workspace that contains a variable O.stored that holds the object O generated by mDEF from the optimal parameter configuration K.stored.
+The *_model_O file is an R workspace that contains a variable O.stored that holds the object $O$ generated by mDEF from the optimal parameter configuration K.stored.
 
 ### [OPTNAME][Core number]_model_QE
 
-The *_model_QE file is a text file that stores the values of E and Q that are produced from the optimal parameter cofiguration K.stored and, in the case of the Replica Exchange Version of Optimus, stores the target acceptance ratio associated with the given replica.
+The *_model_QE file is a text file that stores the values of $E$ and $Q$ that are produced from the optimal parameter cofiguration K.stored and, in the case of the Replica Exchange Version of Optimus, stores the target acceptance ratio associated with the given replica.
 
 ### [OPTNAME][Core number]
 
@@ -231,5 +231,5 @@ The * file is a pdf file that includes 5 plots:
 1) Acceptance probability as a function of optimisation iteration.
 2) System psuedo-temperature as a function of optimisation iteration.
 3) Observed (red solid line) and target (black dashed line) acceptance ratio as a function of optimisation iteration.
-4) Energy E as a function of optimisation iteration.
-5) Quality Q as a function of optimisation iteration.
+4) Energy $E$ as a function of optimisation iteration.
+5) Quality $Q$ as a function of optimisation iteration.
