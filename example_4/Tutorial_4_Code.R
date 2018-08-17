@@ -5,7 +5,7 @@
 state  <- c(cA=100, cB=100, cC=100, cAP=0, cBP=0, cCP=0)
 
 # An object holding the target observables for the optimisation.
-target <- c(cA=40, cB=20, cC=40, cAP=60, cBP=80, cCP=60)
+target <- c(cA=40, cB=20, cC=70, cAP=60, cBP=80, cCP=30)
 
 # An object holding the model definition. It should contain equations that use
 # the objects with the names specified within state and coef above, and should
