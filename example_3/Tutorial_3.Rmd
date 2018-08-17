@@ -1,7 +1,7 @@
 ---
 title: "Optimus - Tutorial 3"
 author: "Nicholas Andre G. Johnson and Aleksandr B. Sahakyan"
-date: "8 August 2018"
+date: "17 August 2018"
 output:
   pdf_document: default
   html_document:
@@ -19,11 +19,11 @@ This is the molecular structure of Vitamin C:
 
 # INCLUDE VITAMIN C STRUCTURE IMAGE HERE!!!!!!
 
-Free rotation is possible around two sigma bonds in this structure: the bond joining carbon 1 and 3, and the bond joing carbon 3 and 5. The groud state configuration of Vitamin C will be a configuration such that steric clash between the constituent members bonded to the freely rotating bonds is minimized while also allowing for close proximity between hydrogen bond donating and hydrogen bond accepting groups. In the following sections, we formalize this optimisation problem and use Optimus to arrive at the solution.
+Free rotation is possible around two sigma bonds in this structure: the bond joining carbon 1 and 3, and the bond joining carbon 3 and 5. The ground state configuration of Vitamin C will be a configuration such that steric clash between the constituent members bonded to the freely rotating bonds is minimized while also allowing for close proximity between hydrogen bond donating and hydrogen bond accepting groups. In the following sections, we formalize this optimisation problem and use Optimus to arrive at the solution.
 
 ## Defining Optimus Inputs
 
-As in the previous Tutorials, we must first rigorously define the parameters which we are optimising. Let us begin by defining a dihedral angle as it aplies to molecular geometry: a dihedral angle is the angle between two intersecting planes, where each plane is specified by 3 atoms of which 2 are common between both planes. Thus, a total of 4 atoms are needed to specify a dihedral angle. The conformation of Vitamin C with respect to its two freely rotating sigma bonds can be specified via two dihedral angles. Let $\psi$ be the dihedral angle defined by the atoms numbered 1, 2, 3 and 4 and let $\phi$ be the dihedral angle defined by the atoms numbered 3, 4, 5 and 6. Loosely, $\psi$ can be thought of as the angle between oxygen atoms 2 and 4 while $\phi$ can be thought of as the angle between oxygen atoms 4 and 6. Having defined these two angles, we can now define the parameter set K as a numeric vector of length 2 whose entries are $\psi$ and $\phi$. We will arbitrarily initialize $\psi$ and $\phi$ to have value 180. The corresponding Vitamin C conformation is illustrated below using Newman Projections along the two rotatable carbon-carbon bonds and with a 3D structure:
+As in the previous Tutorials, we must first rigorously define the parameters which we are optimising. Let us begin by defining a dihedral angle as it applies to molecular geometry: a dihedral angle is the angle between two intersecting planes, where each plane is specified by 3 atoms of which 2 are common between both planes. Thus, a total of 4 atoms are needed to specify a dihedral angle. The conformation of Vitamin C with respect to its two freely rotating sigma bonds can be specified via two dihedral angles. Let $\psi$ be the dihedral angle defined by the atoms numbered 1, 2, 3 and 4 and let $\phi$ be the dihedral angle defined by the atoms numbered 3, 4, 5 and 6. Loosely, $\psi$ can be thought of as the angle between oxygen atoms 2 and 4 while $\phi$ can be thought of as the angle between oxygen atoms 4 and 6. Having defined these two angles, we can now define the parameter set K as a numeric vector of length 2 whose entries are $\psi$ and $\phi$. We will arbitrarily initialize $\psi$ and $\phi$ to have value 180. The corresponding Vitamin C conformation is illustrated below using Newman Projections along the two rotatable carbon-carbon bonds and with a 3D structure:
 
 # INSERT 180, 180 NEWMAN PROJECTIONS HERE !!!!!!!!!!!!!!!!
 
@@ -33,11 +33,11 @@ As in the previous Tutorials, we must first rigorously define the parameters whi
 K <- c(PHI=180, PSI=180)
 ```
 
-Now we will specify a model function m() which will operate on K. Starting from an arbitrary molecular conformation, altering the value of K will likely cause certain clashes or non-optimal interactions between atoms in the molecule that are not used in the definition of the angles $\psi$ and $\phi$. As such, after receiving an input set of parameters K, m() will have to alter the 3D location of constituents atoms while holding K fixed to arrive at the most stable geometry for the input K. Here, unlike in previous Tutorials, to accomplish this task m() will call a completely external program: MOPAC (2016). MOPAC is a geometry optimiser that uses EigenFollowing to arrive at a local minimum (note that MOPAC for a single instance does not guarantee a global minimum will be found). MOPAC takes as input the specification of an initial molecular geometry in addition to an indication of which molecules the program is able to displace (or angles it can alter) and outputs a nearby local minimum moelcular configuration with its corresponding energy in kcal/mol. For this optimisation problem, the input to MOPAC will be structured as a Z matrix, a common form for describing a molecular configuration which consists of using lengths, angles and dihedral angles with respect to previously defined atoms to define new atoms in the configuration.
+Now we will specify a model function $m()$ which will operate on K. Starting from an arbitrary molecular conformation, altering the value of K will likely cause certain clashes or non-optimal interactions between atoms in the molecule that are not used in the definition of the angles $\psi$ and $\phi$. As such, after receiving an input set of parameters K, m() will have to alter the 3D location of constituents atoms while holding K fixed to arrive at the most stable geometry for the input K. Here, unlike in previous Tutorials, to accomplish this task m() will call a completely external program: MOPAC (2016). MOPAC is a geometry optimiser that uses EigenFollowing to arrive at a local minimum (note that MOPAC for a single instance does not guarantee a global minimum will be found). MOPAC takes as input the specification of an initial molecular geometry in addition to an indication of which molecules the program is able to displace (or angles it can alter) and outputs a nearby local minimum molecular configuration with its corresponding energy in kcal/mol. For this optimisation problem, the input to MOPAC will be structured as a Z matrix, a common form for describing a molecular configuration which consists of using lengths, angles and dihedral angles with respect to previously defined atoms to define new atoms in the configuration.
 
 The function m() will construct a Z matrix for Vitamin C using the input dihedral angles K and default values for the remaining relationships needed to define the molecule. m() will then call MOPAC with the newly constrcuted Z matrix, specifiying that all relationships may be altered excepted the input dihedral angles K. Finally, m() will return the energy calculated by MOPAC.
 
-Note that to avoid non convergence issues when calling MOPAC, m() returns a default energy value of -100 kcal/mol if a call to MOPAC does not terminate within 10 seconds. Also, note that although m() requires no additonally data on top of K to operate, m() must still be defined to take an input DATA in accordance with Optimus specifications. Lastly, note that a local installation of MOPAC (2016) is required to execute this optimisation procedure. Below is the definition of m():
+Note that to avoid non convergence issues when calling MOPAC, m() returns a default energy value of -100 kcal/mol if a call to MOPAC does not terminate within 10 seconds. Also, note that although m() requires no additonal data on top of K to operate, m() must still be defined to take an input DATA in accordance with Optimus specifications. Lastly, note that a local installation of MOPAC (2016) is required to execute this optimisation procedure. Below is the definition of m():
 
 ```{r, tidy=FALSE, echo=TRUE, eval=TRUE}
 m <- function(K, DATA = NULL){
@@ -161,7 +161,7 @@ library(knitr)
 kable(data, caption = "7 Vitamin C Conformational Local Minima")
 ```
 
-We will assume that the above listed conformations represent all conformational local minima in the parameter space of $\psi$ and $\phi$. Under this assumption, Conformation 1 should be considred the ground state conformation of Vitamin C. The accuracy of the results produced by Optimus can thus be judged by comparing them to the data listed in this table. It is important to recognize that the "resolution" of $\psi$ and $\phi$ when being optimized by Optimus is 2 degrees due to the manner in which r() was defined. As such, results produced by Optimus that are within plus or minus 2 degrees of a reference conformation should be tolerated.
+We will assume that the above listed conformations represent all conformational local minima in the parameter space of $\psi$ and $\phi$. Under this assumption, Conformation 1 should be considered the ground state conformation of Vitamin C. The accuracy of the results produced by Optimus can thus be judged by comparing them to the data listed in this table. It is important to recognize that the "resolution" of $\psi$ and $\phi$ when being optimized by Optimus is 2 degrees due to the manner in which r() was defined. As such, results produced by Optimus that are within plus or minus 2 degrees of a reference conformation should be tolerated.
 
 ## Acceptance Ratio Annealing Optimus Run
 
@@ -191,7 +191,7 @@ Processors 1, 3 and 4 all arrived at a conformation defined by $\{\phi = 50, \ps
 
 This conformation is equivalent to benchmark Conformation 2. Thus, in this example, Acceptance Ratio Annealing was able to find the Vitamin C conformation with the second lowest energy in the parameter space. This performance is strong, especially given that the energy difference between Conformation 1 and Conformation 2 is only -0.329 kcal/mol.
 
-The below graphs illustrate the system psuedo-temperature and observed acceptance ratio for the last 20 000 optimisation iterations executed by Processor 3.
+The graphs below illustrate the system psuedo-temperature and observed acceptance ratio for the last 20 000 optimisation iterations executed by Processor 3.
 
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
 load("TutorialData/vitamin_4_SA3_model_ALL.Rdata")
@@ -278,7 +278,7 @@ plot(main="Observed Acceptance Ratio (Processor 4 - 66% Acceptance Ratio)", y=re
 lines(y=ACC.VEC.DE.FACTO, x=STEP4ACC.VEC.DE.FACTO, ylim=c(0,100), xlim=range(STEP.STORED), col="red", lwd=2)
 ```
 
-When the optimisation process is first initialized, it is very unlikely that the input initial temperature is conducive to the target acceptance ratio. As such, the Temperature Control Unit alters the system pseudo-temperature considerably and rapidly to align the observed acceptance ratio with the target acceptance ratio, as can be seen in the above two graphs. Moreover, as stated in the previous Tutorial, an exchange between two replicas often has a similar effect of introducing a parameter configuration that is not conducive to the current system pseudo-temperature, which catalyzes significant temperature adjustments executed by the TCU. Accoridngly, sharp increases or decreased in the system pseudo-temperature and significant changes in the value around which the observed acceptance ratio oscillates in the graph above likely indicate steps at which an exchange involving replica 4 occurred.
+When the optimisation process is first initialized, it is very unlikely that the input initial temperature is conducive to the target acceptance ratio. As such, the Temperature Control Unit alters the system pseudo-temperature considerably and rapidly to align the observed acceptance ratio with the target acceptance ratio, as can be seen in the above two graphs. Moreover, as stated in the previous Tutorial, an exchange between two replicas often has a similar effect of introducing a parameter configuration that is not conducive to the current system pseudo-temperature, which catalyzes significant temperature adjustments executed by the TCU. Accordingly, sharp increases or decreases in the system pseudo-temperature and significant changes in the value around which the observed acceptance ratio oscillates in the graph above likely indicate steps at which an exchange involving replica 4 occurred.
 
 ## Summary
 
