@@ -28,9 +28,9 @@ model <- function(t, state, K){
 }
 
 DATA <- NULL
-DATA$state <- state
+DATA$state  <- state
 DATA$target <- target
-DATA$model <- model
+DATA$model  <- model
 
 # An object holding all the coefficients used in the model. The setting of the
 # names and the initialisation is done simultaneusly by editing this.
@@ -40,9 +40,8 @@ K <- c(k1=1.0, k2=1.0, k3=1.0, k4=1.0)
 ################################################################################
 
 ################################################################################
+library(deSolve)
 m <- function(K, DATA){
-  library(deSolve)
-  
   state <- DATA$state
   model <- DATA$model
   
@@ -83,3 +82,4 @@ r <- function(K){
 }
 ################################################################################
 
+Optimus(NCPU = 1, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA", OPTNAME = "DE_4_SA", DATA = DATA, NUMITER = 100000, CYCLES = 2, DUMP.FREQ = 50000, LONG = FALSE)
