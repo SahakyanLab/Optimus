@@ -71,7 +71,7 @@ r <- function(K){
   K.ind.toalter <- sample(size=1, x=1:length(K.new))
   # Creating a potentially new set of coefficients where one entry is altered
   # by either +move.step or -move.step, also randomly selected:
-  move.step <- 0.0005
+  move.step <- 0.0002
   K.new[K.ind.toalter] <- K.new[K.ind.toalter] + sample(size=1, x=c(-move.step, move.step))
   
   ## Setting the negative coefficients to 0
@@ -82,4 +82,4 @@ r <- function(K){
 }
 ################################################################################
 
-Optimus(NCPU = 1, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA", OPTNAME = "DE_4_SA", DATA = DATA, NUMITER = 100000, CYCLES = 2, DUMP.FREQ = 50000, LONG = FALSE)
+Optimus(NCPU = 4, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA", OPTNAME = "DE_4_SA", DATA = DATA, NUMITER = 100000, CYCLES = 2, DUMP.FREQ = 50000, LONG = FALSE)
