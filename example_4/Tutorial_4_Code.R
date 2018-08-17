@@ -2,10 +2,10 @@
 # The values are to be given in any unit. The sum will stay constant across the
 # dynamics of the system. For instance, in case those are the fractions in %,
 # the sum should be 100% and will stay the same in the solution as well.
-state  <- c(cA=100/3, cB=100/3, cC=100/3, cAP=0, cBP=0, cCP=0)
+state  <- c(cA=100, cB=100, cC=100, cAP=0, cBP=0, cCP=0)
 
 # An object holding the target observables for the optimisation.
-target <- c(cA=40, cB=20, cC=40, cAP=0, cBP=0, cCP=0)
+target <- c(cA=40, cB=20, cC=40, cAP=60, cBP=80, cCP=60)
 
 # An object holding the model definition. It should contain equations that use
 # the objects with the names specified within state and coef above, and should
@@ -82,3 +82,4 @@ r <- function(K){
   return(K.new)
 }
 ################################################################################
+
