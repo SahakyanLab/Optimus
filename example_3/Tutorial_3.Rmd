@@ -13,7 +13,7 @@ output:
 
 The focus of this Tutorial is to depart from problem classes involving the search for functions to represent data and demonstrate how Optimus can be flexibly applied to arbitrary problem classes provided that they are formulated in accordance with Optimus specifications. Additionally, this Tutorial will illustrate that Optimus can act as an optimisation kernel while calling external programs to execute a significant amount of the necessary computation for the optimisation process.
 
-In this Tutorial, Optimus will be used to solve a molecular geometry optimisation problem. Specifically, Optimus will be used to determine the values of two dihedral angles in the L-ascorbic acid (Vitamin C) molecule such that the molecule is in its ground state energy configuration. Vitamin C was selected to be the studied molecule because it has more than one freely rotating carbon-carbon sigma bond and the potential for intramolecular hydrogen bonding due to the presence of multiple hydroxy groups and lone pair donating oxygen atoms. Moreover, 
+In this Tutorial, Optimus will be used to solve a molecular geometry optimisation problem. Specifically, Optimus will be used to determine the values of two dihedral angles in the L-ascorbic acid (Vitamin C) molecule such that the molecule is in its ground state energy conformation. Vitamin C was selected to be the studied molecule because it has more than one freely rotating carbon-carbon sigma bond and the potential for intramolecular hydrogen bonding due to the presence of multiple hydroxy groups and lone pair donating oxygen atoms. Moreover, 
 Vitamin C is not a particularly large molecule. Due to these circumstances, Vitamin C has a non trivial groud energy state (as opposed to a molecule like ethane for instance) but one that does not require several days or weeks of simulation to arrive at (the optimisation procedures below took roughly 14-18 hours to terminate).
 
 This is the molecular structure of Vitamin C:
@@ -23,7 +23,7 @@ library(knitr)
 include_graphics("generate_vitC_example_snapshots/VitaminC_structure_NoAngle")
 ```
 
-Free rotation is possible around two sigma bonds in this structure: the bond joining carbon 3 and 6, and the bond joining carbon 6 and 10. The ground state configuration of Vitamin C will be a configuration such that steric clash between the constituent members bonded to the freely rotating bonds is minimized while also allowing for close proximity between hydrogen bond donating and hydrogen bond accepting groups. In the following sections, we formalize this optimisation problem and use Optimus to arrive at the solution.
+Free rotation is possible around two sigma bonds in this structure: the bond joining carbon 3 and 6, and the bond joining carbon 6 and 10. The ground state conformation of Vitamin C will be a conformation such that steric clash between the constituent members bonded to the freely rotating bonds is minimized while also allowing for close proximity between hydrogen bond donating and hydrogen bond accepting groups. In the following sections, we formalize this optimisation problem and use Optimus to arrive at the solution.
 
 ## Defining Optimus Inputs
 
@@ -40,7 +40,7 @@ In the 3D structure, grey denoted Carbon, red denotes Oxygen and white denoted H
 K <- c(PHI=180, PSI=180)
 ```
 
-Now we will specify a model function $m()$ which will operate on $K$. Starting from an arbitrary molecular conformation, altering the value of $K$ will likely cause certain clashes or non-optimal interactions between atoms in the molecule that are not used in the definition of the angles $\psi$ and $\phi$. As such, after receiving an input set of parameters $K$, $m()$ will have to alter the 3D location of constituents atoms while holding $K$ fixed to arrive at the most stable geometry for the input $K$. Here, unlike in previous Tutorials, to accomplish this task $m()$ will call a completely external program: MOPAC (2016). MOPAC is a geometry optimiser that uses EigenFollowing to arrive at a local minimum (note that calling MOPAC for a single instance does not guarantee a global minimum will be found). MOPAC takes as input the specification of an initial molecular geometry in addition to an indication of which molecules the program is able to displace (or angles it can alter) and outputs a nearby local minimum molecular configuration with its corresponding energy in kcal/mol. For this optimisation problem, the input to MOPAC will be structured as a Z matrix, a common form for describing a molecular configuration which consists of using lengths, angles and dihedral angles with respect to previously defined atoms to define new atoms in the configuration.
+Now we will specify a model function $m()$ which will operate on $K$. Starting from an arbitrary molecular conformation, altering the value of $K$ will likely cause certain clashes or non-optimal interactions between atoms in the molecule that are not used in the definition of the angles $\psi$ and $\phi$. As such, after receiving an input set of parameters $K$, $m()$ will have to alter the 3D location of constituents atoms while holding $K$ fixed to arrive at the most stable geometry for the input $K$. Here, unlike in previous Tutorials, to accomplish this task $m()$ will call a completely external program: MOPAC (2016). MOPAC is a geometry optimiser that uses EigenFollowing to arrive at a local minimum (note that calling MOPAC for a single instance does not guarantee a global minimum will be found). MOPAC takes as input the specification of an initial molecular geometry in addition to an indication of which molecules the program is able to displace (or angles it can alter) and outputs a nearby local minimum molecular conformation with its corresponding energy in kcal/mol. For this optimisation problem, the input to MOPAC will be structured as a Z matrix, a common form for describing a molecular conformation which consists of using lengths, angles and dihedral angles with respect to previously defined atoms to define new atoms in the conformation.
 
 The function $m()$ will construct a Z matrix for Vitamin C using the input dihedral angles $K$ and default values for the remaining relationships needed to define the molecule. $m()$ will then call MOPAC with the newly constrcuted Z matrix, specifiying that all relationships may be altered except the input dihedral angles $K$. Finally, $m()$ will return the energy calculated by MOPAC.
 
@@ -110,7 +110,7 @@ m <- function(K, DATA = NULL){
 }
 ```
 
-Next, we define the function $u()$ with returns an energy $E$ and a quality $Q$ of the candidate solution. Since the $m()$ will already output a value for the physcial energy of the candidate Vitamin C configuration, $u()$ can simply set $E$ to be the return value of $m()$. We will make $u()$ set $Q$ to be the negative of the return value of $m()$ such that candidate configurations with lower energies produce higher values of $Q$. Again, although $u()$ does not require any additional data to accomplish this functionality, it must nevertheless be written to optionally accept an input parameter DATA.
+Next, we define the function $u()$ with returns an energy $E$ and a quality $Q$ of the candidate solution. Since the $m()$ will already output a value for the physcial energy of the candidate Vitamin C conformation, $u()$ can simply set $E$ to be the return value of $m()$. We will make $u()$ set $Q$ to be the negative of the return value of $m()$ such that candidate conformations with lower energies produce higher values of $Q$. Again, although $u()$ does not require any additional data to accomplish this functionality, it must nevertheless be written to optionally accept an input parameter DATA.
 
 ```{r, tidy=TRUE, echo=TRUE, eval=TRUE}
 u <- function(O, DATA = NULL){
@@ -147,7 +147,7 @@ r <- function(K){
 }
 ```
 
-The process of determining the energy of a configuration corresponding to a given set of angles $\psi, \phi$ is the most computationally intensive part of this optimisation formulation. Having defined the necessary inputs for Optimus, it should be apparent that this calculation will entirely be handled by MOPAC. This ability to serve as an optimisation kernel by off-loading a significant amount of computation to an external program is one of the many strengths of Optimus.
+The process of determining the energy of a conformation corresponding to a given set of angles $\psi, \phi$ is the most computationally intensive part of this optimisation formulation. Having defined the necessary inputs for Optimus, it should be apparent that this calculation will entirely be handled by MOPAC. This ability to serve as an optimisation kernel by off-loading a significant amount of computation to an external program is one of the many strengths of Optimus.
 
 ## Defining a Benchmark Solution
 
