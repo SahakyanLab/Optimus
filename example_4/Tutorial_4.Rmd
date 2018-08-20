@@ -1,0 +1,38 @@
+---
+title: "Optimus - Tutorial 4"
+author: "Nicholas Andre G. Johnson and Aleksandr B. Sahakyan"
+date: "17 August 2018"
+output:
+  pdf_document: default
+  html_document:
+    highlight: tango
+  word_document: default
+references:
+- id: SystemsBio
+  title: Systems Biology
+  author:
+  - family: Klipp
+    given: Edda
+  - family: Liebermeister
+    given: Wolfram
+  - family: Wierling
+    given: Cristoph
+  - family: Kowald
+    given: Axel
+  - family: Lehrach
+    given: Hans
+  - family: Herwig
+    given: Ralf
+  container-title: Wiley-VCH
+  page: 100-102
+  type: book
+  issued:
+    year: 2009
+---
+
+# Example 4: Determining Rate Constants for Coupled ODEs Modelling a Biological System
+
+This Tutorial will demonstrate the use of Optimus to address a probelm from yet another problem class. We will employ Optimus to recover 
+
+[@SystemsBio]
+
