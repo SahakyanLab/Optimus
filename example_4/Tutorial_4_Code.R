@@ -30,7 +30,7 @@ m <- function(K, DATA){
   state <- DATA$state
   model <- DATA$model
   
-  span = 10.0  # byr
+  span = 10.0
 
   times <- c(0, span)
   O   <- ode(y=state, times=times, func=model, parms=K)[2,2:(length(state)+1)]
