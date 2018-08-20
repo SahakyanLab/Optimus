@@ -1,5 +1,5 @@
 state  <- c(cA=100, cB=100, cC=100, cAP=0, cBP=0, cCP=0)
-target <- c(cA=40, cB=20, cC=70, cAP=60, cBP=80, cCP=30)
+target <- c(cA=90, cB=20, cC=70, cAP=10, cBP=80, cCP=30)
 model <- function(t, state, K){
   
   with( as.list(c(state, K)), {
@@ -67,4 +67,6 @@ r <- function(K){
 }
 ################################################################################
 
-Optimus(NCPU = 4, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA", OPTNAME = "DE_4_SA", DATA = DATA, NUMITER = 100000, CYCLES = 2, DUMP.FREQ = 50000, LONG = FALSE)
+Optimus(NCPU = 4, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA", OPTNAME = "DE_4_SA", DATA = DATA, NUMITER = 200000, CYCLES = 2, DUMP.FREQ = 100000, LONG = FALSE)
+
+Optimus(NCPU = 12, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, ACCRATIO = c(90, 82, 74, 66, 58, 50, 42, 34, 26, 18, 10, 2), OPT.TYPE = "RE", DATA = DATA, OPTNAME = "DE_12_RE", NUMITER = 200000, STATWINDOW = 50, DUMP.FREQ = 100000, LONG = FALSE)

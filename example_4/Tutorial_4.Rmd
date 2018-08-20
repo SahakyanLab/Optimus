@@ -74,10 +74,10 @@ Having outlined how the behaviour of the phosphorelay system can be modelled usi
 state  <- c(cA=100, cB=100, cC=100, cAP=0, cBP=0, cCP=0)
 ```
 
-Next, we will create a variable target which will be a numeric vector holding the names and target concentration of all species in the network. We will arbitrarily choose target values of $[A]_t = 40$, $[B]_t = 20$, $[C]_t = 70$, $[AP]_t = 60$, $[BP]_t = 80$ and $[CP]_t = 30$. Note that the chosen target values must be consistent with the above defined conservation equations, meaning we must have $[X]_i + [XP]_i = [X]_t + [XP]_t, \forall\:{X}\in \{A, B, C\}$.
+Next, we will create a variable target which will be a numeric vector holding the names and target concentration of all species in the network. We will arbitrarily choose target values of $[A]_t = 90$, $[B]_t = 20$, $[C]_t = 70$, $[AP]_t = 10$, $[BP]_t = 80$ and $[CP]_t = 30$. Note that the chosen target values must be consistent with the above defined conservation equations, meaning we must have $[X]_i + [XP]_i = [X]_t + [XP]_t, \forall\:{X}\in \{A, B, C\}$.
 
 ```{r, tidy=FALSE, echo=TRUE, eval=TRUE}
-target <- c(cA=40, cB=20, cC=70, cAP=60, cBP=80, cCP=30)
+target <- c(cA=90, cB=20, cC=70, cAP=10, cBP=80, cCP=30)
 ```
 
 In order to determine the steady state behavior of the ODE system, we will employ the function $ode()$ from the R package deSolve (this function interfaces with the Fortran library typically used to solve systems of differential equations). This function requires as input a function that describes the dynamics of the ODE system. We will call this function $model()$. At a high level, $model()$ will simply define the equations derived in the previous section that describe the network. It should contain equations that use the objects with the names specified within state above, and should have equations that assign the outcomes to new objects that have the same order and names as specified in state, but with "d" at the beginning (a more detailed description of the requirements of $model()$ can be found in the documentation of $ode()$).
@@ -233,4 +233,123 @@ kable(data, caption = "System Summary for k1 = 1.5, k2 = 0.5, k3 = k4 = 1.0")
 
 ## Acceptance Ratio Annealing Optimus Run
 
-We will now call Acceptance Ratio Annealing Optimus to solve our problem. Similarly to Tutorial 2, we will executed 200 000 optimisation iterations and perform 2 annealing cycles.
+We will now call Acceptance Ratio Annealing Optimus to solve our problem. Similarly to Tutorial 2, we will execute 200 000 optimisation iterations and perform 2 annealing cycles. We will set DUMP.FREQ to have a value of 100 000.
+
+```{r, tidy=TRUE, echo=TRUE, eval=FALSE}
+Optimus(NCPU = 4, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA", OPTNAME = "DE_4_SA", DATA = DATA, NUMITER = 200000, CYCLES = 2, DUMP.FREQ = 100000, LONG = FALSE)
+```
+
+```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
+T4_SA_p1 <- c(0.0012516, 0.7974, 0.3586, 0.0128, 2.3886)
+T4_SA_p2 <- c(0.0017556, 0.7850, 0.3532, 0.0126, 2.3512)
+T4_SA_p3 <- c(0.0013625, 0.8098, 0.3642, 0.0130, 2.4262)
+T4_SA_p4 <- c(0.0012516, 0.7974, 0.3586, 0.0128, 2.3886)
+data <- data.frame(rbind(T4_SA_p1, T4_SA_p2, T4_SA_p3, T4_SA_p4))
+row.names(data) <- c("Processor 1", "Processor 2", "Processor 3", "Processor 4")
+colnames(data) <- c("E (RMSD)", "K1", "K2", "K3", "K4")
+library(knitr)
+kable(data, caption = "4 Core Acceptance Ratio Annealing Optimus Run Results")
+```
+
+Of the 4 optimisation replicas, Processors 1 and 4 find the best set of rate constants (lowest RMSD), $\{k_1=0.7974, k_2=0.3586, k_3=0.0128, k_4=2.3886\}$. This set of rate constants results in an RMSD (after 10 iterations) of $0.0012516$. Let us simulate how the system evolves according to these rate constants for 10 time steps:
+
+```{r, tidy=FALSE, echo=FALSE, eval=TRUE, fig.height = 5.5, fig.width = 10}
+coef  <- c(k1=0.7974, k2=0.3586, k3=0.0128, k4=2.3886)
+t     <- 10
+
+times <- seq(0,t)
+out   <- ode(y=state, times=times, func=model, parms=coef)
+
+plot(main="Dephosphorylated Species Concentration as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+lines(x=out[1:t+1,1], y=out[1:t+1,3], col="blue")
+lines(x=out[1:t+1,1], y=out[1:t+1,4], col="black")
+legend(x=30, y=60, legend=c("[A]", "[B]", "[C]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
+```
+
+```{r, tidy=FALSE, echo=FALSE, eval=TRUE, fig.height = 5.5, fig.width = 10}
+plot(main="Phosphorylated Species Concentration as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+lines(x=out[1:t+1,1], y=out[1:t+1,6], col="blue")
+lines(x=out[1:t+1,1], y=out[1:t+1,7], col="black")
+legend(x=30, y=60, legend=c("[AP]", "[BP]", "[CP]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
+```
+
+The table below summarizes the initial and final concentration of the various species when the system is simulated for 10 time steps using the rate constants $\{k_1=0.7974, k_2=0.3586, k_3=0.0128, k_4=2.3886\}$:
+
+```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
+initial <- out[1,2:7]
+final <- out[t+1,2:7]
+data <- data.frame(rbind(initial, final))
+row.names(data) <- c("Initial", "Final (After 50 time steps)")
+colnames(data) <- c("[A]", "[B]", "[C]", "[AP]", "[BP]", "[CP]")
+library(knitr)
+kable(data, caption = "System Summary for k1 = 0.7974, k2 = 0.3586, k3 = 0.0128, k4 = 2.3886")
+```
+
+MAKE COMMENTARY ON THE RESULTS/GRAPHICS
+
+## Replica Exchange Optimus Run
+
+Let us now examine how replica exchange Optimus using 12 cores performs on this task. We will use 200 000 optimisation iterations and set STATWINDOW to equal, similarly to Tutorials 2 and 3.
+
+```{r, tidy=TRUE, echo=TRUE, eval=TRUE}
+ACCRATIO <- c(90, 82, 74, 66, 58, 50, 42, 34, 26, 18, 10, 2)
+```
+```{r, tidy=TRUE, echo=TRUE, eval=FALSE}
+Optimus(NCPU = 12, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, ACCRATIO = ACCRATIO, OPT.TYPE = "RE", DATA = DATA, OPTNAME = "DE_12_RE", NUMITER = 200000, STATWINDOW = 50, DUMP.FREQ = 100000, LONG = FALSE)
+```
+
+
+```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
+T4_RE_p1  <- c(90, 0.0026225, 0.9088, 0.4090, 0.0146, 2.7246)
+T4_RE_p2  <- c(82, 0.0026343, 0.8346, 0.3754, 0.0134, 2.5012)
+T4_RE_p3  <- c(74, 0.0019724, 0.7234, 0.3252, 0.0116, 2.1644)
+T4_RE_p4  <- c(66, 0.0020945, 0.9586, 0.4312, 0.0154, 2.8748)
+T4_RE_p5  <- c(58, 0.0029243, 0.9338, 0.4200, 0.0150, 2.8002)
+T4_RE_p6  <- c(50, 0.0025811, 0.8964, 0.4034, 0.0144, 2.6872)
+T4_RE_p7  <- c(42, 0.0028685, 0.8592, 0.3866, 0.0138, 2.5752)
+T4_RE_p8  <- c(34, 0.0025121, 0.8840, 0.3978, 0.0142, 2.6500)
+T4_RE_p9  <- c(26, 0.0011265, 0.9834, 0.4424, 0.0158, 2.9492)
+T4_RE_p10 <- c(18, 0.0025811, 0.8964, 0.4034, 0.0144, 2.6872)
+T4_RE_p11 <- c(10, 0.0012516, 0.7974, 0.3586, 0.0128, 2.3886)
+T4_RE_p12 <- c(2, 0.0017556, 0.7850, 0.3532, 0.0126, 2.3512)
+data <- data.frame(rbind(T4_RE_p1, T4_RE_p2, T4_RE_p3, T4_RE_p4, T4_RE_p5, T4_RE_p6, T4_RE_p7, T4_RE_p8, T4_RE_p9, T4_RE_p10, T4_RE_p11, T4_RE_p12))
+row.names(data) <- c("Processor 1", "Processor 2", "Processor 3", "Processor 4", "Processor 5", "Processor 6", "Processor 7", "Processor 8", "Processor 9", "Processor 10", "Processor 11", "Processor 12")
+colnames(data) <- c("Replica Acceptance Ratio", "E (RMSD)", "K1", "K2", "K3", "K4")
+kable(data, caption = "12 Core Replica Exchange Optimus Run Results")
+```
+
+Of the 12 optimisation replicas, Processor 9 finds the best set of rate constants, $\{k_1=0.9834, k_2=0.4424, k_3=0.0158, k_4=2.9492\}$. This set of rate constants results in an RMSD (after 10 iterations) of $0.0011265$, which is lower than the RMSD of the solution found by acceptance ratio annealing Optimus ($0.0012516$). Let us simulate how the system evolves according to these rate constants for 10 time steps:
+
+```{r, tidy=FALSE, echo=FALSE, eval=TRUE, fig.height = 5.5, fig.width = 10}
+coef  <- c(k1=0.9834, k2=0.4424, k3=0.0158, k4=2.9492)
+t     <- 10
+
+times <- seq(0,t)
+out   <- ode(y=state, times=times, func=model, parms=coef)
+
+plot(main="Dephosphorylated Species Concentration as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+lines(x=out[1:t+1,1], y=out[1:t+1,3], col="blue")
+lines(x=out[1:t+1,1], y=out[1:t+1,4], col="black")
+legend(x=30, y=60, legend=c("[A]", "[B]", "[C]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
+
+plot(main="Phosphorylated Species Concentration as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+lines(x=out[1:t+1,1], y=out[1:t+1,6], col="blue")
+lines(x=out[1:t+1,1], y=out[1:t+1,7], col="black")
+legend(x=30, y=60, legend=c("[AP]", "[BP]", "[CP]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
+```
+
+The table below summarizes the initial and final concentration of the various species when the system is simulated for 10 time steps using the rate constants $\{k_1=0.9834, k_2=0.4424, k_3=0.0158, k_4=2.9492\}$:
+
+```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
+initial <- out[1,2:7]
+final <- out[t+1,2:7]
+data <- data.frame(rbind(initial, final))
+row.names(data) <- c("Initial", "Final (After 50 time steps)")
+colnames(data) <- c("[A]", "[B]", "[C]", "[AP]", "[BP]", "[CP]")
+library(knitr)
+kable(data, caption = "System Summary for k1 = 0.9834, k2 = 0.4424, k3 = 0.0158, k4 = 2.9492")
+```
+
+MAKE COMMENTARY ON THE RESULTS/GRAPHICS
+
+## Summary
