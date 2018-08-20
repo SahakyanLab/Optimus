@@ -1,17 +1,5 @@
-# An object that is created by setting the state names and the initial values.
-# The values are to be given in any unit. The sum will stay constant across the
-# dynamics of the system. For instance, in case those are the fractions in %,
-# the sum should be 100% and will stay the same in the solution as well.
 state  <- c(cA=100, cB=100, cC=100, cAP=0, cBP=0, cCP=0)
-
-# An object holding the target observables for the optimisation.
 target <- c(cA=40, cB=20, cC=70, cAP=60, cBP=80, cCP=30)
-
-# An object holding the model definition. It should contain equations that use
-# the objects with the names specified within state and coef above, and should
-# have equations that assign the outcomes to new objects that have the same
-# order and names as specified in state, but with "d" at the beginning.
-#---------------------------------
 model <- function(t, state, K){
   
   with( as.list(c(state, K)), {
@@ -32,9 +20,6 @@ DATA$state  <- state
 DATA$target <- target
 DATA$model  <- model
 
-# An object holding all the coefficients used in the model. The setting of the
-# names and the initialisation is done simultaneusly by editing this.
-
 ################################################################################
 K <- c(k1=1.0, k2=1.0, k3=1.0, k4=1.0)
 ################################################################################
@@ -48,8 +33,8 @@ m <- function(K, DATA){
   span = 10.0  # byr
 
   times <- c(0, span)
-  out   <- ode(y=state, times=times, func=model, parms=K)[2,2:(length(state)+1)]
-  return(out)
+  O   <- ode(y=state, times=times, func=model, parms=K)[2,2:(length(state)+1)]
+  return(O)
 }
 ################################################################################
 
