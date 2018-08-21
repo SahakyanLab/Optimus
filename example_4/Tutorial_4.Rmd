@@ -39,7 +39,7 @@ library(knitr)
 include_graphics("Network")
 ```
 
-Under normal circumstances, the transmembrane protein Sln1, which is present as a dimer, autophosphorylates at a histidine residue (consuming ATP). The phosphate group is then transferred to an aspartate residue of Sln1. Thereafter, the phosphate is transferred to the protein Ypd1 and finally to the protein Ssk1. Ssk1 is continuously dephosphortylated to give an output signal. The signalling pathway is inhibitted by an increase is osmolarity outside of the cell [@SystemsBio]. If we let $A$ represent Sln1, $B$ represent Ypd1, $C$ represent Ssk1 and $XP$ represent the phophorylated form of protein $X$, then the above network can be represented by the below network [@SystemsBio]:
+Under normal circumstances, the transmembrane protein Sln1, which is present as a dimer, autophosphorylates at a histidine residue (consuming ATP). The phosphate group is then transferred to an aspartate residue of Sln1. Thereafter, the phosphate is transferred to the protein Ypd1 and finally to the protein Ssk1. Ssk1 is continuously dephosphortylated to give an output signal. The signalling pathway is inhibitted by an increase is osmolarity outside of the cell [@SystemsBio]. If we let $A$ represent Sln1, $B$ represent Ypd1, $C$ represent Ssk1 and $XP$ represent the phophorylated form of protein $X$, then the above network can be represented by the below schematic [@SystemsBio]:
 
 ```{r, tidy = TRUE, eval = TRUE, echo = FALSE, fig.align='center'}
 library(knitr)
@@ -64,11 +64,11 @@ $$\frac{d}{dt}[AP] = -\frac{d}{dt}[A]$$
 $$\frac{d}{dt}[BP] = -\frac{d}{dt}[B]$$
 $$\frac{d}{dt}[CP] = -\frac{d}{dt}[C]$$
 
-Given this model of the phosphorelay system, the question we desire to answer is as follows: given initial concentrations of the three proteins $\{[A]_i, [B]_i, [C]_i\}$ and target concentrations of the three proteins $\{[A]_t, [B]_t, [C]_t\}$, what are the values $\{k_1, k_2, k_3, k_4\}$ that result in the proteins having the target concentrations at steady state when the system is allowed to equilibrate from the initial concentrations? This formulation assumes that no information is known about the rate constants and that initial and target concentrations can be determined experimentally. The problem formulation could be altered depending on what information is known or can be determined experimentally.
+Given this model of the phosphorelay system, the question we desire to answer is as follows: given initial concentrations of the three proteins $\{[A]_i, [B]_i, [C]_i\}$ and target concentrations of the three proteins $\{[A]_t, [B]_t, [C]_t\}$, what are the values $\{k_1, k_2, k_3, k_4\}$ that result in the proteins having the target concentrations at steady state when the system is allowed to equilibrate from the initial concentrations? This formulation assumes that no information is known about the rate constants and that initial and target concentrations can be determined experimentally. The problem formulation could be altered depending on the information that is known or that can be determined experimentally.
 
 ## Defining Optimus Inputs
 
-Having outlined how the behaviour of the phosphorelay system can be modelled using a system of differential equations, we can now proceed with defining input parameters for Optimus. We will create a variable state that will be a numeric vector holding the names and initial concentration of all species in the network. For this Tutorial, we will choose $[A]_i = [B]_i = [C]_i = 100$ and $[AP]_i = [BP]_i = [CP]_i = 0$. Note that the units are arbitrary and that the total sum of units across this vector will remain constant throughout the simulation of the dynamics of the phosphorelay system.
+Having outlined how the behaviour of the phosphorelay system can be modelled using a system of differential equations, we can now proceed with defining input parameters for Optimus. We will create a variable state that will be a numeric vector holding the names and initial concentrations of all species in the network. For this Tutorial, we will choose $[A]_i = [B]_i = [C]_i = 100$ and $[AP]_i = [BP]_i = [CP]_i = 0$. Note that the units are arbitrary and that the total sum of units across this vector will remain constant throughout the simulation of the dynamics of the phosphorelay system.
 
 ```{r, tidy=FALSE, echo=TRUE, eval=TRUE}
 state  <- c(cA=100, cB=100, cC=100, cAP=0, cBP=0, cCP=0)
@@ -114,7 +114,7 @@ We will make $K$ be a numeric vector holding the set of rate constants $\{k_1, k
 K <- c(k1=1.0, k2=1.0, k3=1.0, k4=1.0)
 ```
 
-The function $m()$ will take as input the vector $K$ of rate constants and the list $DATA$. It will return an object $O$ that contains the concentrations of the six species in the network when the system is simulated from the initial state specified in $DATA$ using the $K$ rate constants for 10 time steps. Note that it is not necessarily guaranteed that the system will reach a steady state after 10 time steps; the number of time steps was chosen such that the optimisation procedure would terminate within 1-2 hours. $m()$ will call the function$ode()$ from the package deSolve, so we must first ensure that deSolve is installed.
+The function $m()$ will take as input the vector $K$ of rate constants and the list $DATA$. It will return an object $O$ that contains the concentrations of the six species in the network when the system is simulated from the initial state specified in $DATA$ using the $K$ rate constants for 10 time steps. Note that it is not necessarily guaranteed that the system will reach a steady state after 10 time steps; the number of time steps was chosen such that the optimisation procedure would terminate within 1-2 hours. $m()$ will call the function $ode()$ from the package deSolve, so we must first ensure that deSolve is installed.
 
 ```{r, tidy=FALSE, echo=TRUE, eval=FALSE}
 install.packages("deSolve")
@@ -134,7 +134,7 @@ m <- function(K, DATA){
 }
 ```
 
-Recall that the function $u()$ must return an energy $E$ and a quality $Q$ of the candidate solution. Here, $u()$ will set both $E$ and $Q$ to be the RMSD between the steady state concentrations of the network correponding to the current set of rate constants $K$ as determined by $m()$ and the target concentrations. 
+Recall that the function $u()$ must return an energy $E$ and a quality $Q$ of the candidate solution. Here, $u()$ will set both $E$ and $Q$ to be the RMSD between the steady state concentrations of the network correponding to the current set of rate constants $K$, as determined by $m()$, and the target concentrations. 
 
 ```{r, tidy=FALSE, echo=TRUE, eval=TRUE}
 u <- function(O, DATA){
@@ -178,12 +178,12 @@ t     <- 50
 times <- seq(0,t)
 out   <- ode(y=state, times=times, func=model, parms=coef)
 
-plot(main="Dephosphorylated Species Concentration as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+plot(main="Concentration of Dephosphorylated Species as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
 lines(x=out[1:t+1,1], y=out[1:t+1,3], col="blue")
 lines(x=out[1:t+1,1], y=out[1:t+1,4], col="black")
 legend(x=30, y=30, legend=c("[A]", "[B]", "[C]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
 
-plot(main="Phosphorylated Species Concentration as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+plot(main="Concentration of Phosphorylated Species as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
 lines(x=out[1:t+1,1], y=out[1:t+1,6], col="blue")
 lines(x=out[1:t+1,1], y=out[1:t+1,7], col="black")
 legend(x=30, y=30, legend=c("[AP]", "[BP]", "[CP]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
@@ -209,17 +209,17 @@ t     <- 50
 times <- seq(0,t)
 out   <- ode(y=state, times=times, func=model, parms=coef)
 
-plot(main="Dephosphorylated Species Concentration as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+plot(main="Concentration of Dephosphorylated Species as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
 lines(x=out[1:t+1,1], y=out[1:t+1,3], col="blue")
 lines(x=out[1:t+1,1], y=out[1:t+1,4], col="black")
 legend(x=30, y=30, legend=c("[A]", "[B]", "[C]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
 
-plot(main="Phosphorylated Species Concentration as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+plot(main="Concentration of Phosphorylated Species as a function of Time Step", x=out[1:t+1,1], y=out[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
 lines(x=out[1:t+1,1], y=out[1:t+1,6], col="blue")
 lines(x=out[1:t+1,1], y=out[1:t+1,7], col="black")
 legend(x=30, y=30, legend=c("[AP]", "[BP]", "[CP]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
 ```
-The table below summarizes the initial and final concentrations of the various species when the system is simulated for 50 time steps using the rate constants $\{k_1=0.5, k_2=1.0, k_3=1.0, k_4=1.5\}$:
+The table below summarizes the initial and final concentrations of the various species when the system is simulated for 50 time steps using the rate constants $\{k_1=1.5, k_2=0.5, k_3=1.0, k_4=1.0\}$:
 
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
 initial <- out[1,2:7]
@@ -260,12 +260,12 @@ t     <- 10
 times <- seq(0,t)
 outSA   <- ode(y=state, times=times, func=model, parms=coef)
 
-plot(main="Dephosphorylated Species Concentration as a function of Time Step", x=outSA[1:t+1,1], y=outSA[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+plot(main="Concentration of Dephosphorylated Species as a function of Time Step", x=outSA[1:t+1,1], y=outSA[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
 lines(x=outSA[1:t+1,1], y=outSA[1:t+1,3], col="blue")
 lines(x=outSA[1:t+1,1], y=outSA[1:t+1,4], col="black")
 legend(x=30, y=60, legend=c("[A]", "[B]", "[C]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
 
-plot(main="Phosphorylated Species Concentration as a function of Time Step", x=outSA[1:t+1,1], y=outSA[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+plot(main="Concentration of Phosphorylated Species as a function of Time Step", x=outSA[1:t+1,1], y=outSA[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
 lines(x=outSA[1:t+1,1], y=outSA[1:t+1,6], col="blue")
 lines(x=outSA[1:t+1,1], y=outSA[1:t+1,7], col="black")
 legend(x=30, y=60, legend=c("[AP]", "[BP]", "[CP]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
@@ -277,17 +277,17 @@ The table below summarizes the initial and final concentrations of the various s
 initial <- outSA[1,2:7]
 final <- outSA[t+1,2:7]
 data <- data.frame(rbind(initial, final))
-row.names(data) <- c("Initial", "Final (After 50 time steps)")
+row.names(data) <- c("Initial", "Final (after 10 time steps)")
 colnames(data) <- c("[A]", "[B]", "[C]", "[AP]", "[BP]", "[CP]")
 library(knitr)
 kable(data, caption = "System Summary for k1 = 0.7974, k2 = 0.3586, k3 = 0.0128, k4 = 2.3886")
 ```
 
-As can be seen in the above table, the concentration of the species in the system after 10 time steps are very close to the target values $[A]_t = 90$, $[B]_t = 20$, $[C]_t = 70$, $[AP]_t = 10$, $[BP]_t = 80$ and $[CP]_t = 30$. As alluded to earlier, it is possible that the system not have reached a steady state after 10 time steps, however the above graphs suggest that the concentrations after 10 steps are alreadye extremely close to if not equal to steady state values. The optimisation process could be reexecuted after increasing the value of the parameter $span$ in the function $m()$ to simulate the system for a larger number of time steps.
+As can be seen in the above table, the concentration of the species in the system after 10 time steps are very close to the target values $[A]_t = 90$, $[B]_t = 20$, $[C]_t = 70$, $[AP]_t = 10$, $[BP]_t = 80$ and $[CP]_t = 30$. As alluded to earlier, it is possible that the system has not reached a steady state after 10 time steps, however the above graphs suggest that the concentrations after 10 steps are already extremely close to, if not equal to, steady state values. The optimisation process could be re-executed after increasing the value of the parameter $span$ in the function $m()$ to simulate the system for a larger number of time steps.
 
 ## Replica Exchange Optimus Run
 
-Let us now examine how replica exchange Optimus using 12 cores performs on this task. We will use 200 000 optimisation iterations and set STATWINDOW to equal, similarly to Tutorials 2 and 3.
+Let us now examine how replica exchange Optimus using 12 cores performs on this task. We will use 200 000 optimisation iterations and set STATWINDOW to equal 50, similarly to Tutorials 2 and 3.
 
 ```{r, tidy=TRUE, echo=TRUE, eval=TRUE}
 ACCRATIO <- c(90, 82, 74, 66, 58, 50, 42, 34, 26, 18, 10, 2)
@@ -324,12 +324,12 @@ t     <- 10
 times <- seq(0,t)
 outRE   <- ode(y=state, times=times, func=model, parms=coef)
 
-plot(main="Dephosphorylated Species Concentration as a function of Time Step", x=outRE[1:t+1,1], y=outRE[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+plot(main="Concentration of Dephosphorylated Species as a function of Time Step", x=outRE[1:t+1,1], y=outRE[1:t+1,2], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
 lines(x=outRE[1:t+1,1], y=outRE[1:t+1,3], col="blue")
 lines(x=outRE[1:t+1,1], y=outRE[1:t+1,4], col="black")
 legend(x=30, y=60, legend=c("[A]", "[B]", "[C]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
 
-plot(main="Phosphorylated Species Concentration as a function of Time Step", x=outRE[1:t+1,1], y=outRE[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
+plot(main="Concentration of Phosphorylated Species as a function of Time Step", x=outRE[1:t+1,1], y=outRE[1:t+1,5], type="l", xlab="Time Step", ylab="Concentration",col="red", ylim=c(0,100))
 lines(x=outRE[1:t+1,1], y=outRE[1:t+1,6], col="blue")
 lines(x=outRE[1:t+1,1], y=outRE[1:t+1,7], col="black")
 legend(x=30, y=60, legend=c("[AP]", "[BP]", "[CP]"),col=c("red","blue","black"),lty=c(1,1,1), cex=1.2, horiz=TRUE)
@@ -341,17 +341,17 @@ The table below summarizes the initial and final concentrations of the various s
 initial <- outRE[1,2:7]
 final <- outRE[t+1,2:7]
 data <- data.frame(rbind(initial, final))
-row.names(data) <- c("Initial", "Final (After 50 time steps)")
+row.names(data) <- c("Initial", "Final (after 10 time steps)")
 colnames(data) <- c("[A]", "[B]", "[C]", "[AP]", "[BP]", "[CP]")
 library(knitr)
 kable(data, caption = "System Summary for k1 = 0.9834, k2 = 0.4424, k3 = 0.0158, k4 = 2.9492")
 ```
 
-Here again, we see that the species concentrations after 10 time steps are remarkably close to the target values $[A]_t = 90$, $[B]_t = 20$, $[C]_t = 70$, $[AP]_t = 10$, $[BP]_t = 80$ and $[CP]_t = 30$ and the graphs suggests that these concetrations have either converged or are very close to converging to steady state.
+Here again, we see that the species' concentrations after 10 time steps are remarkably close to the target values $[A]_t = 90$, $[B]_t = 20$, $[C]_t = 70$, $[AP]_t = 10$, $[BP]_t = 80$ and $[CP]_t = 30$ and the graphs suggests that these concetrations have either converged or are very close to converging to steady state.
 
 ## Summary
 
-We have seen how Optimus can be empoyed to recover rate constants for a systems of coupled ODEs that describe a biological pathway. Given an initial state of the system and a target state, both Acceptance Ratio Annealing Optimus and Replica Exchange Optimus found a set of rate constants that resulted in the desired system behaviour upon simulation of the system. Replica Exchange Optimus retrieved a solution that resulted in a lower RMSD after 10 time steps ($0.0011265$) than the solution found by Acceptance Ratio Annealing Optimus ($0.0012516$).
+We have seen how Optimus can be empoyed to recover rate constants for a system of coupled ODEs that describes a biological pathway. Given an initial state of the system and a target state, both Acceptance Ratio Annealing Optimus and Replica Exchange Optimus found a set of rate constants that resulted in the desired system behaviour upon simulation of the system. Replica Exchange Optimus retrieved a solution that resulted in a lower RMSD after 10 time steps ($0.0011265$) than the solution found by Acceptance Ratio Annealing Optimus ($0.0012516$).
 
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
 finalSA <- outSA[t+1,2:7]
