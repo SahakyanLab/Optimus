@@ -372,3 +372,5 @@ colnames(data) <- c("E (RMSD)", "K1", "K2", "K3", "K4")
 library(knitr)
 kable(data, caption = "Summary of Recovered Rate Constants")
 ```
+
+# References
