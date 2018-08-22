@@ -42,6 +42,7 @@ references:
     year: 2009
 ---
 
+\setcounter{tocdepth}{2}
 \tableofcontents
 \newpage
 
