@@ -4,6 +4,141 @@ author: "Nicholas Andre G. Johnson and Aleksandr B. Sahakyan"
 date: "21 August 2018"
 output: pdf_document
 references:
+- id: Raue2013
+  title: Lessons Learned from Quantitative Dynamical Modeling in Systems Biology
+  author: 
+  - family: Raue
+    given: Andreas
+  - family: Schilling
+    given: Marcel
+  - family: Bachmann
+    given: Julie
+  - family: Matteson
+    given: Andrew
+  - family: Schelke
+    given: Max
+  - family: Kaschek
+    given: Daniel
+  - family: Hug
+    given: Sabine
+  - family: Kreutz
+    given: Clemens
+  - family: Harms
+    given: Brian
+  - family: Theis
+    given: Fabian
+  - family: Klingmuller
+    given: Ursula
+  - family: Timmer
+    given: Jens
+  container-title: PLOS ONE
+  URL: https://doi.org/10.1371/journal.pone.0074335
+  DOI: 10.1371/journal.pone.0074335
+  type: article-journal
+  issued:
+    year: 2013
+    month: 09
+- id: Ballard2009
+  title: Replica exchange with nonequilibrium switches
+  author: 
+  - family: Ballard
+    given: Andrew
+  - family: Jarzynski
+    given: Christopher
+  container-title: Proceedings of the National Academy of Sciences of the United States of America
+  volume: 106
+  URL: https://doi-org.ezproxy.princeton.edu/10.1073/pnas.0900406106
+  DOI: 10.1073/pnas.0900406106
+  type: article-journal
+  issued:
+    year: 2009
+    month: 07
+- id: Chen2015
+  title: Generalized Metropolis acceptance criterion for hybrid non-equilibrium molecular dynamics - Monte Carlo simulations
+  author: 
+  - family: Chen
+    given: Yunjie
+  - family: Roux
+    given: Benoit
+  container-title: The Journal of Chemical Physics
+  volume: 142
+  URL: https://doi-org.ezproxy.princeton.edu/10.1063/1.4904889
+  DOI: 10.1063/1.4904889
+  type: article-journal
+  issued:
+    year: 2015
+    month: 01
+- id: Chib1995
+  title: Understanding the Metropolis-Hastings Algorithm
+  author: 
+  - family: Chib
+    given: Siddhartha
+  - family: Greenberg
+    given: Edward
+  container-title: The American Statistician
+  volume: 49
+  URL: https://www.jstor.org/stable/2684568
+  DOI: 10.2307/2684568
+  page: 327-335
+  type: article-journal
+  issued:
+    year: 1995
+    month: 11
+- id: MCMC
+  title: Markov chain Monte Carlo in practice
+  author:
+  - family: Gilks
+    given: W.R.
+  - family: Richardson
+    given: S.
+  - family: Spiegelhalter
+    given: D.J.
+  container-title: Chapman & Hall
+  type: book
+  issued:
+    year: 1996
+- id: Cowles1996
+  title: "Markov Chain Monte Carlo Convergence Diagnostics: A Comparative Review"
+  author: 
+  - family: Cowles
+    given: Mary
+  - family: Carlin
+    given: Bradley
+  container-title: Journal of the American Statistical Association
+  volume: 91
+  DOI: 10.1080/01621459.1996.10476956
+  page: 883-904
+  type: article-journal
+  issued:
+    year: 1996
+    month: 06
+- id: Kirkpatrick1983
+  title: "Optimization by simulated annealing: Quantitative studies"
+  author: 
+  - family: Kirkpatrick
+    given: Scott
+  container-title: Journal of Statistical Physics
+  volume: 34
+  URL: https://doi.org/10.1007/BF01009452
+  DOI: 10.1007/BF01009452
+  page: 975-986
+  type: article-journal
+  issued:
+    year: 1984
+- id: Ingber1993
+  title: "Simulated Annealing: Practice versus Theory"
+  author: 
+  - family: Ingber
+    given: Lester
+  container-title: Mathematical and Computer Modelling
+  volume: 18
+  URL: https://doi-org.ezproxy.princeton.edu/10.1016/0895-7177(93)90204-C
+  DOI: 10.1016/0895-7177(93)90204-C
+  page: 29-57
+  type: article-journal
+  issued:
+    year: 1993
+    month: 12
 - id: Sugita1999
   title: Replica-exchange molecular dynamics method for protein folding
   author:
@@ -50,7 +185,7 @@ references:
 
 ## Motivation
 
-For a complex model, where the unknown parameters cannot be determined by conventional linear or non-linear fitting techniques, Monte Carlo methods for optimisation, based on the random sampling of the parameter space, is the method of choice. In such a case, the quality of the solution found following some optimisation protocol depends on that protocol's ability to effectively explore the parameter space. Many existing methods perform well for certain models, but fail in other models due in part to inefficient exploration of the parameter space. In this manual, we present Optimus, a Universal Monte Carlo optimisation engine in R with acceptance ratio annealing, replica exchange and adaptive thermoregulation. It can universally interface with any model definition and efficiently optimise the model's parameters by consistently exploring the parameter space effectively. Optimus can execute either a simulated annealing procedure or a replica exchange procedure, depending on the desires of the user.
+For a complex model, where the unknown parameters cannot be determined by conventional linear or non-linear fitting techniques, Monte Carlo methods for optimisation, based on the random sampling of the parameter space, is the method of choice [@Cowles1996]. In such a case, the quality of the solution found following some optimisation protocol depends on that protocol's ability to effectively explore the parameter space [@MCMC]. Many existing methods perform well for certain models, but fail in other models due in part to inefficient exploration of the parameter space. In this manual, we present Optimus, a Universal Monte Carlo optimisation engine in R with acceptance ratio annealing, replica exchange and adaptive thermoregulation. It can universally interface with any model definition and efficiently optimise the model's parameters by consistently exploring the parameter space effectively. Optimus can execute either an acceptance ratio annealing procedure or a replica exchange procedure, depending on the desires of the user.
 
 This User Manual will begin with a brief overview of Monte Carlo optimisation and the common temperature simulated annealing framework. It will then proceed with a presentation of Optimus' acceptance ratio annealing procedure, its adaptive thermoregulation feature, and its replica exchange procedure. After an explantion of how to download the Optimus R package from GitHub and install it locally, 4 Tutorials will be presented to illustrate how users should employ Optimus and to demonstrate its flexibility as an optimisation engine. Finally, an "Advanced User Manual" section will be included in which all possible input parameters to Optimus will be outlined and the output format will be specified.
 
@@ -65,7 +200,7 @@ $$
 E_2 = e(u(m(r(K))))
 $$
 
-We then accept or reject the move, meaning we accept the new set of $r(K)$ coefficients as the new K or revert back to the previous K, guided by the following acceptance probability, as postulated in a Metropolis criterion:
+We then accept or reject the move, meaning we accept the new set of $r(K)$ coefficients as the new K or revert back to the previous K, guided by the following acceptance probability, as postulated in a Metropolis criterion [@Chib1995, @Chen2015]:
 
 $$
 p_{accept} = min(1, e^\frac{-{\Delta}E}{T})
@@ -76,11 +211,11 @@ $$
 
 where T is the pseudo temperature, that should be always greater than 0. For a given ${\Delta}E > 0$ energy difference, one would have different stringency for accepting the move depending on the value of the pseudo-temperature T. Therefore, in case the Monte Carlo simulation were to drive the $K$ set to a state where any further moves would increase the pseudo-energy great enough for the moves to be always rejected, then one could overcome that and further sample the other values in the parameter space by increasing the pseudo-temperature.
 
-In molecular dynamics simulation, where the objective is to sample the free energy surface populated by a molecule, one way to overcome the barriers is by using the technique known as simulated annealing, where we anneal the temperature gradually from some higher value to a lower value during the course of the simulation. The parts of the simulation where the pseudo-temperature is higher allows relatively unconstrained exploration of the search space whereas those parts with a lower pseudo-temperature limit the search to a more local area of the parameter space. Multiple cycles of this annealing procedure can be executed to increase the overall sampling. In the same manner, we can anneal the pseudo-temperature in the Monte Carlo procedures for model optimisation.
+In molecular dynamics simulation, where the objective is to sample the free energy surface populated by a molecule, one way to overcome the barriers is by using the technique known as simulated annealing, where we anneal the temperature gradually from some higher value to a lower value during the course of the simulation [@Kirkpatrick1983]. The parts of the simulation where the pseudo-temperature is higher allows relatively unconstrained exploration of the search space whereas those parts with a lower pseudo-temperature limit the search to a more local area of the parameter space. Multiple cycles of this annealing procedure can be executed to increase the overall sampling. In the same manner, we can anneal the pseudo-temperature in the Monte Carlo procedures for model optimisation.
 
 ## Acceptance Ratio Annealing Procedure
 
-A significant limitation of pseudo-temperature simulated annealing is that a given scheme of temperature annealing might be efficient for some models or pseudo-energy metrics, but not efficient for others. A temperature at a given point of the annealing cycle that is designed to be quite permissive in terms of accepting the move, can actually not be permissive depending on the value and scale of the ${\Delta}E$ energy difference, as can be seen in the equation for $p_{accept}$. Furthermore, even within the single model optimisation procedure, the pseudo-energy metric can shift into a value range that does not match with the selected temperature scheme anymore, leading to similar problems (meaning poor sampling of the parameter space). This can often be the case when the pseudo-energy of the system does not exhibit a smooth dependency on $K$, loosely meaning that similar values of $K$ do not necessarily produce similar pseudo-energy values. 
+A significant limitation of pseudo-temperature simulated annealing is that a given scheme of temperature annealing might be efficient for some models or pseudo-energy metrics, but not efficient for others [@Ingber1993]. A temperature at a given point of the annealing cycle that is designed to be quite permissive in terms of accepting the move, can actually not be permissive depending on the value and scale of the ${\Delta}E$ energy difference, as can be seen in the equation for $p_{accept}$. Furthermore, even within the single model optimisation procedure, the pseudo-energy metric can shift into a value range that does not match with the selected temperature scheme anymore, leading to similar problems (meaning poor sampling of the parameter space). This can often be the case when the pseudo-energy of the system does not exhibit a smooth dependency on $K$, loosely meaning that similar values of $K$ do not necessarily produce similar pseudo-energy values. 
 
 To this end, in general cases where we do not deal with energies and temperatures that display the smoothness emulating real physical systems (such smoothness is often found in molecular dynamics or Monte Carlo simulations of molecules), we need to anneal a more robust metric for crossing different barriers. As such a metric, Optimus, when in its default mode, uses the acceptance ratio.
 
@@ -112,7 +247,7 @@ where $E(x)$ represents the energy associated with the molecule configuration $x
 1) Simulate $n$ replicas of Monte Carlo Optimisation at distinct temperatures simultaneously and independently
 2) Randomly select two configurations in adjacent replicas and exchange them with probability $p_{REMD}$
 
-Optimus extends this approach to apply to arbitrary optimisation problems with two primary modifications. Firstly, due to the aforementioned robustness of utilizing acceptance ratio as a controlling metric rather than pseudo-temperature in arbitrary systems, Optimus initializes $n$ replicas with different target acceptance ratios as opposed to different temperatures and uses the previously described TCU for adaptive thermoregulation. Secondly, given that Optimus is only concerned with finding an Optimal solution and is not concerned with equilibrium sampling of the parameter space (as equilibrium sampling has no meaning for non physcial systems), after two candidate configurations are selected for exchange, they are necessarily exchanged (this can be viewed as setting $p_{REMD} = 1$ in the above procedure). By relaxing the equilibrium sampling criterion, the parameter space can be more extensively explored. This approach produced good results (as illustrated in the tutorials) and is a viable alternative to the acceptance ratio annealing mode of Optimus when the user has access to good computing resources.
+Optimus extends this approach to apply to arbitrary optimisation problems with two primary modifications. Firstly, due to the aforementioned robustness of utilizing acceptance ratio as a controlling metric rather than pseudo-temperature in arbitrary systems, Optimus initializes $n$ replicas with different target acceptance ratios as opposed to different temperatures and uses the previously described TCU for adaptive thermoregulation. Secondly, given that Optimus is only concerned with finding an Optimal solution and is not concerned with equilibrium sampling of the parameter space (as equilibrium sampling has no meaning for non physcial systems), after two candidate configurations are selected for exchange, they are necessarily exchanged (this can be viewed as setting $p_{REMD} = 1$ in the above procedure) [@Ballard2009]. By relaxing the equilibrium sampling criterion, the parameter space can be more extensively explored. This approach produced good results (as illustrated in the tutorials) and is a viable alternative to the acceptance ratio annealing mode of Optimus when the user has access to good computing resources.
 
 ## Installation Instructions
 
@@ -1063,7 +1198,7 @@ $$\frac{d}{dt}[AP] = -\frac{d}{dt}[A]$$
 $$\frac{d}{dt}[BP] = -\frac{d}{dt}[B]$$
 $$\frac{d}{dt}[CP] = -\frac{d}{dt}[C]$$
 
-Given this model of the phosphorelay system, the question we desire to answer is as follows: given initial concentrations of the three proteins $\{[A]_i, [B]_i, [C]_i\}$ and target concentrations of the three proteins $\{[A]_t, [B]_t, [C]_t\}$, what are the values $\{k_1, k_2, k_3, k_4\}$ that result in the proteins having the target concentrations at steady state when the system is allowed to equilibrate from the initial concentrations? This formulation assumes that no information is known about the rate constants and that initial and target concentrations can be determined experimentally. The problem formulation could be altered depending on the information that is known or that can be determined experimentally.
+Given this model of the phosphorelay system, the question we desire to answer is as follows: given initial concentrations of the three proteins $\{[A]_i, [B]_i, [C]_i\}$ and target concentrations of the three proteins $\{[A]_t, [B]_t, [C]_t\}$, what are the values $\{k_1, k_2, k_3, k_4\}$ that result in the proteins having the target concentrations at steady state when the system is allowed to equilibrate from the initial concentrations? This formulation assumes that no information is known about the rate constants and that initial and target concentrations can be determined experimentally, which is often the case in practice [@Raue2013]. The problem formulation could be altered depending on the information that is known or that can be determined experimentally.
 
 ## Defining Optimus Inputs
 
