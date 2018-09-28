@@ -1,0 +1,19 @@
+Copyright (C) 2017+ Sahakyan Lab (sahakyanlab[at]cantab.net).
+
+License. You may redistribute this source code (or its components) and/or
+    modify/translate it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; version 3 of the License
+    (GPLv3). You can find the details of GPLv3 in the following link:
+    https://www.gnu.org/licenses/gpl-3.0.html. For any (sub)licensing
+    queries, please contact us through the above e-mail address.
+
+How to cite. The usage of Optimus should be accompanied with the following
+    citation:
+    Nicholas Andre G. Johnson and Aleksandr B. Sahakyan, "General purpose
+    adaptive optimisation engine in R", in preparation, 2018.
+
+Contributing to Optimus. We are interested in continuously adding additional
+    functionalities and optimisation modes to Optimus. You are encouraged to
+    contribute code or issues to this repository for further incorporation into
+    the package. For details on how to do this, please see the package
+    web-site: http://optimus.atgcdynamics.org.

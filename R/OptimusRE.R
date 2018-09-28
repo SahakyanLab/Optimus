@@ -1,15 +1,4 @@
 ################################################################################
-# Copyright (C) 2015+ Sahakyan Lab (aleksahak[at]cantab.net).                  #                              #
-#                                                                              #
-# Contributors: Aleksandr B. Sahakyan                                          #
-#               Nicholas Andre  G. Johnson                                     #
-#                                                                              #
-# License: You may redistribute this source code (or its components) and/or    #
-#   modify/translate it under the terms of the GNU General Public License      #
-#   as published by the Free Software Foundation; version 2 of the License     #
-#   (GPL2). You can find the details of GPL2 in the following link:            #
-#   https://www.gnu.org/licenses/gpl-2.0.html                                  #
-################################################################################
 #                                                                              #
 #        Replica Exchange Acceptance Ratio Monte Carlo optimiser               #
 #        Featuring:                                                            #
@@ -498,5 +487,3 @@ OptimusRE <- function(NUMITER       = 1000000,
   if(NCPU==1){ return(OUTPUT) } else { return(0) }
 
 }
-
-################################################################################
