@@ -1533,7 +1533,7 @@ include_graphics("./example_5/shuffling.pdf")
 
 Take note that our set of contacts complies with the following criteria:
 
-  1. The set only contains **unique, long-range contacts**, with $i$ and $j$ regions being always separated by greater than 2 megabases/Mb. In terms of integer, the threshold is 50 ($2 Mb/40 kb = 50$), such that $j-i > 50$.
+  1. The set only contains **unique, long-range contacts**, with $i$ and $j$ regions always separated by greater than 2 megabases/Mb. In terms of integer, the threshold is 50 ($2 Mb/40 kb = 50$), such that $j-i > 50$.
 
   2. $i$ is set to be always less than $j$. This avoids duplicate contacts in the set, such as 
   
@@ -1544,9 +1544,9 @@ colnames(dup.mx) <- c("i", "j")
 dup.mx
 ```
 
-  3. A region can take part in more than one contact (as in rows 1 and 2 in the table above), given that the contacts it forms comply with the two aforementioned criteria. 
+  3. A region can take part in more than one contact (as in region 96 in rows 1 and 2 in the table above), given that the contacts it forms comply with the two aforementioned criteria. 
   
-**The task is to take the DNA regions from the original set shown above and to shuffle them to produce a new set of contacts. This is useful for specific research on genomic 3D contacts requiring good quality negative controls. The challenge here is to maximise the number of new contacts that are valid, meaning that they (A) still satisfy the aforementioned criteria and (B) are not present in the original set.**
+**The task is to take the DNA regions from the original set (shown above) and to shuffle them to produce a new set of contacts. This is useful for specific research on genomic 3D contacts requiring good quality negative controls. The challenge here is to maximise the number of new contacts that are valid, meaning that they (A) still satisfy the aforementioned criteria and (B) are not present in the original set.**
 
 ## Defining Optimus Inputs
 
@@ -1561,7 +1561,7 @@ K[,"j"] <- sample(x=K[,"j"], size=nrow(K), replace=FALSE)
 ```
 2. Define the rest of Optimus inputs:
 
-The $m$() function should operate on the object $K$, which is the original set of contacts with all j's shuffled once (from Step 2.1). It can also accept a supplementary object $DATA$ that holds data necessary for its calculations or comparisons. Output of $m$() is the observable object $O$ that is the percentage of contacts not satisfying the aforementioned criteria or are already in the original set. To get $O$, $m$() will require the following additional data: a. original set of contacts (IJ.ORIG), b. number of contacts, and c. gap limit set between contacting regions in terms of positive integer (50). These are stored in the $DATA$ object that is supplied to $m$(). 
+The $m$() function should operate on the object $K$, which is the original set of contacts with all j's shuffled once (from Step 1). It can also accept a supplementary object $DATA$ that holds data necessary for its calculations or comparisons. Output of $m$() is the observable object $O$ that is the percentage of contacts not satisfying the aforementioned criteria or are already in the original set. To get $O$, $m$() will require the following additional data: a. original set of contacts (IJ.ORIG), b. number of contacts, and c. gap threshold set between contacting regions in terms of positive integer (50). These are stored in the $DATA$ object that is supplied to $m$(). 
 
 ```{r, tidy=FALSE, echo=TRUE, eval=FALSE}
 DATA <- NULL
@@ -1572,7 +1572,7 @@ DATA$numContacts <- 173
 m <- function(K, DATA){
   # Total number of erroneous contacts in the new set
   errCont <- sum(
-    # Contacts not satisfying the threshold distance between their two regions
+    # Contacts not satisfying the threshold value of the gap between their two regions
     ( (K[,"j"]-K[,"i"]) <= DATA$gaplimit )  |
     # Contacts also present in the original set
     ( K[,"j"]==DATA$IJ.ORIG[,"j"]        )  |
@@ -1585,7 +1585,7 @@ m <- function(K, DATA){
 }
 ```
 
-Dictated by the $u$() function, the error percentage, $O$, will be directly used as the pseudo-energy, $E$, since we do want to minimise this value. Meanwhile, the $K$ snapshot quality, $Q$, will be the negative of $O$. 
+Dictated by the $u$() function, the error percentage, $O$, will be directly used as the pseudo-energy, $E$, since we do want to minimise this value. Meanwhile, the $K$ snapshot quality, $Q$, which we want to improve, can be the negative of $O$. 
 
 ```{r, tidy=TRUE, echo=TRUE, eval=FALSE}
 u <- function(O){
@@ -1623,7 +1623,7 @@ Note that if additional data is required by $m$(), that object should be assigne
 
 The 4 new sets obtained have the following error percentages:
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
-ePERC.v <- c(11.0354, 11.4441, 11.3079, 11.5804)
+ePERC.v <- c(11.5804, 11.4441, 11.7166, 11.7166)
 data <- cbind(1:4, ePERC.v)
 colnames(data) <- c("Set", "%")
 kable(data, caption = "OPTIMUS SA: % of Erroneous Contacts")
@@ -1643,9 +1643,9 @@ Optimus(NCPU = 12, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, ACCRATIO = ACCRA
 
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
 ACCRATIO <- c(90, 82, 74, 66, 58, 50, 42, 34, 26, 18, 10, 2)
-ePERC.v <- c(18.6649, 21.2534, 21.3896, 19.2098, 
-             18.8011, 18.1199, 17.4387, 25.2044, 
-             20.9809, 20.1635, 16.7575, 21.2534)
+ePERC.v <- c(18.3924, 21.5259, 21.1172, 20.2997,
+             20.1635, 17.9837, 18.9373, 24.1144,
+             21.3896, 21.7984, 17.8474, 19.7548)
 data <- cbind(1:12, ACCRATIO, ePERC.v)
 colnames(data) <- c("Set", "Replica Acceptance Ratio", "%")
 kable(data, caption = "OPTIMUS RE: % of Erroneous Contacts")
@@ -1655,10 +1655,10 @@ Notably, none of the 12 new sets of contacts from the replica exchange run are b
 
 ## Summary
 
-We have added yet another one to the diverse applications of Optimus, this time by performing a basic shuffling of pairs of positive integers that, in this case, represent contacts between DNA regions, to form a new set of pairs/contacts. Additionally, Optimus showed to be a platform, where certain restrictions or conditions can easily be incorporated to a given task, which usually is required for specific research objectives. The table below shows the best output from the acceptance ratio annealing and replica exchange Optimus runs, with the former reaching the better set with 653 valid contacts out of the 734 total number of original contacts. 
+We have added yet another one to the diverse applications of Optimus, this time by performing a basic shuffling of pairs of positive integers that, in this case, represent contacts between DNA regions, to form a new set of contacts. Additionally, Optimus showed to be a platform, where certain restrictions or conditions can easily be incorporated to a given task, which usually is required for specific research objectives. The table below shows the % of erroneous contacts of the best outputs from the acceptance ratio annealing and replica exchange Optimus runs, with the former producing the better set with 650 valid contacts out of the 734 total number of original contacts. 
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
 name.v <- c("Optimus (Acceptance Ratio Annealing)", "Optimus (Replica Exchange)")
-data <- cbind(name.v, c(11.0354, 16.7575))
+data <- cbind(name.v, c(11.4441, 17.8474))
 colnames(data) <- c("Method", "%")
 kable(data, caption = "Best Outputs: % of Erroneous Contacts")
 ```

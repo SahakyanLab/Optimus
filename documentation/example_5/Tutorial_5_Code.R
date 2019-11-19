@@ -3,41 +3,46 @@
 ################################################################################
 # FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS
 ### DIRECTORY STRUCTURE ########################################################
-wk.dir = "/Optimus/"
+wk.dir = "/Optimus"
 data.dir = paste0(wk.dir, "/documentation/example_5/TutorialData")
 out.dir = paste0(wk.dir, "/documentation/example_5")
 setwd(out.dir)
 ### OTHER SETTINGS #############################################################
 region.len = 4e+04
 mingap.Mb = 2e+06
+out.name = "IJ.NEW.OPTI" 
 
-# Optimus SA | RE
-opt.type = "SA" # "SA" | # RE
-# If opt.type = "RE"
-ACCRATIO = c(90, 82, 74, 66, 58, 50, 42, 34, 26, 18, 10, 2)
-
-out.name = "IJ.NEW.OPTI.SA" # "IJ.NEW.OPTI.SA" | "IJ.NEW.OPTI.RE"
+seed = 840
+opt.type = "SA" # "SA" | "RE"
+# If opt.type = "RE" 
+accratio = c(90, 82, 74, 66, 58, 50, 42, 34, 26, 18, 10, 2)
+# If opt.type = "RE", replica should be equal to number of acceptance ratios 
+# in accratio
 replica = 4 # 4 | # 12
-
 numiter = 2e+05 
 cycles = 2
 dump.freq = 1e+05
+# For opt.type="SA", no need to set statwindow, default will be used (statwindow=70)
+# For opt.type="RE", statwindow=50
+statwindow = 50
 calcErrorOnly = FALSE
 ################################################################################
 # LIBRARIES & DEPENDANCES * LIBRARIES & DEPENDANCIES * LIBRARIES & DEPENDANCES *
 ################################################################################
 library(foreach)
 library(doParallel)
-source(paste0(wk.dir, "/R/Optimus.R"))
-source(paste0(wk.dir, "/R/OptimusSA.R"))
-source(paste0(wk.dir, "/R/TemperatureControlUnit.R"))
-
+source(paste0(wk.dir, "/lib/Optimus.R"))
+source(paste0(wk.dir, "/lib/OptimusSA.R"))
+source(paste0(wk.dir, "/lib/OptimusRE.R"))
+source(paste0(wk.dir, "/lib/TemperatureControlUnit.R"))
+#-------------------------------------------------------------------------------
 # Function to calculate error rate of shuffled set of contacts in comparison to
 # original set and based on the following criteria for a valid contact:
 # 1. i should always be greater than j.  
 # 2. i and j should be separated by a distance greater than 2 Mb. 
 # 3. The set should only contain unique pairs/contacts.
 # 4. Contact in new set should not be in the original set. 
+#-------------------------------------------------------------------------------
 calcErrorRate <- function(
   test = IJ.NEW,
   ref = IJ.ORIG,
@@ -51,10 +56,10 @@ calcErrorRate <- function(
   )
   
   return(x/nrow(IJ.ORIG)*100)
-  
 }
-
+#-------------------------------------------------------------------------------
 # Define interfacing functions for Optimus
+#-------------------------------------------------------------------------------
 u <- function(O, DATA = NULL){
   result <- NULL
   result$Q <- -O
@@ -79,6 +84,8 @@ m <- function(K, DATA = NULL){
 ################################################################################
 start.time <- Sys.time() 
 
+out.name <- paste0(out.name, ".", opt.type)
+
 # Required gap between contacting bins; in terms of bins
 mingap <- mingap.Mb/region.len
 
@@ -90,6 +97,8 @@ if(calcErrorOnly==FALSE){
   DATA <- list(IJ.ORIG=IJ.ORIG, numContacts=nrow(IJ.ORIG), gaplimit=mingap)
   
   K <- IJ.ORIG
+  
+  set.seed(seed)
   # First random shuffle of js; is are kept in the same order
   K[,"j"] <- sample(x=K[,"j"], size=nrow(K), replace=FALSE)
   
@@ -98,12 +107,12 @@ if(calcErrorOnly==FALSE){
   if(opt.type=="SA"){
     Optimus(NCPU = replica, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = opt.type,
             OPTNAME = out.name, DATA = DATA, NUMITER = numiter, CYCLES = cycles, DUMP.FREQ = dump.freq,
-            LONG = TRUE)
-  } else if(opt.type=="SA"){
+            LONG = TRUE, SEED = seed)
+  } else if(opt.type=="RE"){
     # Uses default SEED = 840
-    Optimus(NCPU = replica, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, ACCRATIO = ACCRATIO,
-            OPT.TYPE = opt.type, DATA = DATA, OPTNAME = out.name, NUMITER = numiter, STATWINDOW = 50,
-            DUMP.FREQ = dump.freq, LONG = TRUE)
+    Optimus(NCPU = replica, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, ACCRATIO = accratio,
+            OPT.TYPE = opt.type, DATA = DATA, OPTNAME = out.name, NUMITER = numiter, STATWINDOW = statwindow,
+            DUMP.FREQ = dump.freq, LONG = TRUE, SEED = seed)
   } else {
     stop("opt.type can only be either SA or RE")
   }
@@ -134,7 +143,9 @@ for(x in 1:replica){
     gap=mingap
   )
   ePERC.v[x] <- paste0("%ERROR", x, ": ", round(x=ePERC, digits=10))
+  
 }
+
 write(ePERC.v, file=paste0(out.dir, "/stats_", out.name))
 
 end.time <- Sys.time()
