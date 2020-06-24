@@ -64,6 +64,6 @@ tempControlDefinition <- function(){
                                     resetTemp = function(){
                                       instanceOFswitch <<- 0
                                       return(new.T.INI)
-                                    })
+                                    }),where=environment()
   )'
 }
