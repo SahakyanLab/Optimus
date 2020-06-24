@@ -7,7 +7,7 @@ m <- function(K,
               notconvergedE = -100.00,
               mopac.cmd="/home/alex/prog/mopac2016/MOPAC2016.exe",
               clean = TRUE){
-
+  # mopac.cmd="~/Downloads/MOPAC2016_for_Macintosh/MOPAC2016.exe"
  # m(K=c(PHI=90.0, PSI=90.0), notconvergedE = -100.00,
  #   mopac.cmd="/home/alex/prog/mopac2016/MOPAC2016.exe", clean=TRUE)
 
@@ -100,3 +100,7 @@ r <- function(K){
   return(K.new)
 }
 ################################################################################
+
+Optimus(NCPU = 4, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA", OPTNAME = "vitamin_4_SA", NUMITER = 1e+05, CYCLES = 2, DUMP.FREQ = 50000, LONG = FALSE)
+
+Optimus(NCPU = 12, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, ACCRATIO = c(90, 82, 74, 66, 58, 50, 42, 34, 26, 18, 10, 2), OPT.TYPE = "RE", OPTNAME = "vitamin_12_RE", NUMITER = 1e+05, EXCHANGE.FREQ = 500, STATWINDOW = 50, DUMP.FREQ = 50000, LONG = FALSE)

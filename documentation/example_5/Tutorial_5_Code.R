@@ -3,7 +3,7 @@
 ################################################################################
 # FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS * FLAGS
 ### DIRECTORY STRUCTURE ########################################################
-wk.dir = "/Optimus"
+wk.dir = "~/Documents/GitHub/Optimus"
 data.dir = paste0(wk.dir, "/documentation/example_5/TutorialData")
 out.dir = paste0(wk.dir, "/documentation/example_5")
 setwd(out.dir)
@@ -29,12 +29,12 @@ calcErrorOnly = FALSE
 ################################################################################
 # LIBRARIES & DEPENDANCES * LIBRARIES & DEPENDANCIES * LIBRARIES & DEPENDANCES *
 ################################################################################
-library(foreach)
-library(doParallel)
-source(paste0(wk.dir, "/lib/Optimus.R"))
-source(paste0(wk.dir, "/lib/OptimusSA.R"))
-source(paste0(wk.dir, "/lib/OptimusRE.R"))
-source(paste0(wk.dir, "/lib/TemperatureControlUnit.R"))
+# library(foreach)
+# library(doParallel)
+# source(paste0(wk.dir, "/lib/Optimus.R"))
+# source(paste0(wk.dir, "/lib/OptimusSA.R"))
+# source(paste0(wk.dir, "/lib/OptimusRE.R"))
+# source(paste0(wk.dir, "/lib/TemperatureControlUnit.R"))
 #-------------------------------------------------------------------------------
 # Function to calculate error rate of shuffled set of contacts in comparison to
 # original set and based on the following criteria for a valid contact:
