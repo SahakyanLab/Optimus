@@ -230,8 +230,13 @@ OptimusRE <- function(NUMITER       = 1000000,
         STEP <- EXCHANGE * (NUMITER/EXCHANGE.FREQ) + INT
 
         K.new <- r(K=K)
-        O     <- m(K=K.new, DATA = DATA)
-        snp   <- u(O=O, DATA = DATA)
+        if (is.null(DATA)) {
+          O     <- m(K=K.new)
+          snp   <- u(O=O)
+        } else {
+          O     <- m(K=K.new, DATA = DATA)
+          snp   <- u(O=O, DATA = DATA)
+        }
 
         Q       <- snp$Q
         E       <- snp$E                      ; ENERGY.TRIAL.VEC[STEP.add]<- E
