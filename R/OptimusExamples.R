@@ -536,7 +536,7 @@ end.time-start.time
 '
     if (method=='SA') {
       call <- 
-        ' Optimus(NCPU = 4, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA",OPTNAME = "IJ.NEW.OPTI.SA", DATA = DATA, NUMITER = 2e+05, CYCLES = 2, DUMP.FREQ = 1e+0 LONG = FALSE)'
+        ' Optimus(NCPU = 4, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA",OPTNAME = "IJ.NEW.OPTI.SA", DATA = DATA, NUMITER = 2e+05, CYCLES = 2, DUMP.FREQ = 1e+0,LONG = FALSE)'
     } else if (method=='RE') {
       call <- 
         'Optimus(NCPU = 12, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, ACCRATIO = ACCRATIO, OPT.TYPE = "RE", DATA = DATA, OPTNAME = "IJ.NEW.OPTI.RE", NUMITER = 2e+05, STATWINDOW = 50, DUMP.FREQ = 1e+05, LONG = FALSE)'
