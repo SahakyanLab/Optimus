@@ -163,10 +163,11 @@ OptimusSA <- function(NUMITER       = 1000000,
 
   print("Monte Carlo optimisation with acceptance annealing...", quote=FALSE)
 
-  e_new <- new.env()
 
   #-- PARALLEL PROCESSING WRAP # # # # # # # # #
   suppressWarnings(foreach(repl=1:NCPU, .inorder=FALSE, .export = ls(environment())) %op% {
+
+    e_new <- new.env()
 
     #temperature control unit definition
     eval(parse(text = tempControlDefinitionAsString))

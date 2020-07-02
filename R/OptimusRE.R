@@ -184,13 +184,14 @@ OptimusRE <- function(NUMITER       = 1000000,
 
   print("Replica Exchange Monte Carlo optimisation", quote=FALSE)
 
-  e_new <- new.env()
-  
-  
+
+
   for(EXCHANGE in 1:EXCHANGE.FREQ){
 
     #-- PARALLEL PROCESSING WRAP # # # # # # # # #
     suppressWarnings(result <- foreach(repl=1:NCPU, .inorder=FALSE, .export = ls(environment())) %op% {
+
+      e_new <- new.env()
 
       eval(parse(text = tempControlDefinitionAsString))
 
@@ -204,7 +205,7 @@ OptimusRE <- function(NUMITER       = 1000000,
                                          minT = T.MIN, max = TSCLnum, scaling = T.SCALING,
                                          DELTA = T.DELTA)
       rm(e_new)
-      
+
       set.seed(seeds[repl])
 
       #-- retrieve replica variables from caches
