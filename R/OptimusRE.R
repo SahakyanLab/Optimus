@@ -184,6 +184,9 @@ OptimusRE <- function(NUMITER       = 1000000,
 
   print("Replica Exchange Monte Carlo optimisation", quote=FALSE)
 
+  e_new <- new.env()
+  
+  
   for(EXCHANGE in 1:EXCHANGE.FREQ){
 
     #-- PARALLEL PROCESSING WRAP # # # # # # # # #
@@ -192,7 +195,7 @@ OptimusRE <- function(NUMITER       = 1000000,
       eval(parse(text = tempControlDefinitionAsString))
 
       #initialize a temperature control unit
-      tempControl <- tempControlUnit$new(NumofAccRatSMIdeal = NumofAccRatGRIdeal.cache[repl],
+      tempControl <-  get('tempControlUnit',e_new)$new(NumofAccRatSMIdeal = NumofAccRatGRIdeal.cache[repl],
                                          NumofAccRatGRIdeal = NumofAccRatSMIdeal.cache[repl],
                                          t.adjstep = t.adjstep.cache[repl],T.ADJSTEP = T.ADJSTEP,
                                          AccR.category = AccR.category.cache[repl],
@@ -200,6 +203,8 @@ OptimusRE <- function(NUMITER       = 1000000,
                                          instanceOFswitch = instanceOFswitch.cache[repl],
                                          minT = T.MIN, max = TSCLnum, scaling = T.SCALING,
                                          DELTA = T.DELTA)
+      rm(e_new)
+      
       set.seed(seeds[repl])
 
       #-- retrieve replica variables from caches

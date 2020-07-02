@@ -163,6 +163,8 @@ OptimusSA <- function(NUMITER       = 1000000,
 
   print("Monte Carlo optimisation with acceptance annealing...", quote=FALSE)
 
+  e_new <- new.env()
+
   #-- PARALLEL PROCESSING WRAP # # # # # # # # #
   suppressWarnings(foreach(repl=1:NCPU, .inorder=FALSE, .export = ls(environment())) %op% {
 
@@ -170,10 +172,11 @@ OptimusSA <- function(NUMITER       = 1000000,
     eval(parse(text = tempControlDefinitionAsString))
 
     #initialize a temperature control unit
-    tempControl <- tempControlUnit$new(NumofAccRatSMIdeal = 0, NumofAccRatGRIdeal = 0, t.adjstep = T.ADJSTEP,
+    tempControl <- get('tempControlUnit',e_new)$new(NumofAccRatSMIdeal = 0, NumofAccRatGRIdeal = 0, t.adjstep = T.ADJSTEP,
                                        T.ADJSTEP = T.ADJSTEP, AccR.category = "INITIAL", new.T.INI = T.INI,
                                        instanceOFswitch = 0, minT = T.MIN, max = TSCLnum, scaling = T.SCALING,
                                        DELTA = T.DELTA)
+    rm(e_new)
 
     set.seed(seeds[repl])
     if(NCPU==1){ repl <- NULL }
