@@ -5,13 +5,38 @@
 \title{Interface for Acceptance Ratio Annealing Monte Carlo Optimisation
 and Replica Exchange Acceptance Ratio Monte Carlo Optimisation.}
 \usage{
-Optimus(NUMITER = 1e+06, STATWINDOW = 70, T.INI = 1e-05,
-  T.ADJSTEP = 5e-09, TSCLnum = 2, T.SCALING = 3, T.MIN = 5e-09,
-  T.DELTA = 2, DUMP.FREQ = 10000, LIVEPLOT = TRUE,
-  LIVEPLOT.FREQ = 1e+05, PDFheight = 29, PDFwidth = 20, NCPU = 4,
-  LONG = TRUE, SEED = 840, OPTNAME = "", DATA = NULL, K.INITIAL = 0,
-  rDEF, mDEF, uDEF, EXCHANGE.FREQ = 1000, ACCRATIO = c(90, 50, 5, 1),
-  CYCLES = 10, ACCRATIO.IN = 90, ACCRATIO.FIN = 0.5, OPT.TYPE = "SA")
+Optimus(
+  NUMITER = 1e+06,
+  STATWINDOW = 70,
+  T.INI = 1e-05,
+  T.ADJSTEP = 5e-09,
+  TSCLnum = 2,
+  T.SCALING = 3,
+  T.MIN = 5e-09,
+  T.DELTA = 2,
+  DUMP.FREQ = 10000,
+  LIVEPLOT = TRUE,
+  LIVEPLOT.FREQ = 1e+05,
+  PDFheight = 29,
+  PDFwidth = 20,
+  NCPU = 4,
+  LONG = TRUE,
+  SEED = 840,
+  OPTNAME = "",
+  DATA = NULL,
+  K.INITIAL = 0,
+  rDEF,
+  mDEF,
+  uDEF,
+  EXCHANGE.FREQ = 1000,
+  ACCRATIO = c(90, 50, 5, 1),
+  CYCLES = 10,
+  ACCRATIO.IN = 90,
+  ACCRATIO.FIN = 0.5,
+  OPT.TYPE = "SA",
+  dir = "./",
+  starcore = NULL
+)
 }
 \arguments{
 \item{NUMITER}{Number of model optimisation steps.}

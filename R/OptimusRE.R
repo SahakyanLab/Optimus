@@ -92,6 +92,7 @@ OptimusRE <- function(NUMITER       = 1000000,
                       ACCRATIO      = c(90, 50, 5, 1),
                       DATA          = NULL,
                       K.INITIAL     = 0,
+                      DIR           = './',
                       rDEF,
                       mDEF,
                       uDEF
@@ -307,7 +308,7 @@ OptimusRE <- function(NUMITER       = 1000000,
         if(LIVEPLOT==TRUE){
           if(STEP%%LIVEPLOT.FREQ == 0){
 
-            pdf(width=PDFwidth, height=PDFheight, file=paste(OPTNAME,repl,".pdf",sep=""))
+            pdf(width=PDFwidth, height=PDFheight, file=paste0(DIR,'/',OPTNAME,repl,".pdf",sep=""))
             par(mfrow=c(5,1))
 
             plot(y=PROB.VEC, x=STEP.STORED, ylab="Acceptance P", xlab="Step",
@@ -344,9 +345,9 @@ OptimusRE <- function(NUMITER       = 1000000,
 
 
         if(STEP%%DUMP.FREQ == 0 & exists("DUMP.MODEL") ){
-          write(DUMP.MODEL, file=paste(OPTNAME,repl,"_model_QE.log",sep=""))
-          save(K.stored,    file=paste(OPTNAME,repl,"_model_K.Rdata",sep=""))
-          save(O.stored,    file=paste(OPTNAME,repl,"_model_O.Rdata",sep=""))
+          write(DUMP.MODEL, file=paste0(DIR,'/',OPTNAME,repl,"_model_QE.log",sep=""))
+          save(K.stored,    file=paste0(DIR,'/',OPTNAME,repl,"_model_K.Rdata",sep=""))
+          save(O.stored,    file=paste0(DIR,'/',OPTNAME,repl,"_model_O.Rdata",sep=""))
         }
 
         STEP.add <- STEP.add + 1    ########
@@ -404,7 +405,7 @@ OptimusRE <- function(NUMITER       = 1000000,
       OUTPUT$new.T.INI             <- tempControl$new.T.INI
       OUTPUT$instanceOFswitch      <- tempControl$instanceOFswitch
 
-      save(OUTPUT, file=paste(OPTNAME,repl,"_model_ALL.Rdata", sep=""))
+      save(OUTPUT, file=paste0(DIR,'/',OPTNAME,repl,"_model_ALL.Rdata"))
 
       OUTPUT
     })

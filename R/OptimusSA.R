@@ -95,9 +95,11 @@ OptimusSA <- function(NUMITER       = 1000000,
                       ACCRATIO.FIN  = 0.5,
                       DATA          = NULL,
                       K.INITIAL     = 0,
+                      DIR           = './',
                       rDEF,
                       mDEF,
-                      uDEF
+                      uDEF,
+                      starcore      = NULL
 ){
   ################################################################################
 
@@ -152,6 +154,15 @@ OptimusSA <- function(NUMITER       = 1000000,
   E.stored      <- 100000
   Step.stored   <- 1
   STEP.add      <- 1
+  #-- initial K and O.
+  K.stored      <- NULL
+  O.stored      <- NULL
+  # initial higtest order coef for starcore
+  if (!is.null(starcore)) {
+    Highest.order.coef.old <- 0
+    N.TERMS               = NULL #-- number of terms
+    COEF.ORDER            = NULL
+  }
   #-- stores the definition of the temperature control unit
   #   to be evaluated in enviornment created by foreach
   tempControlDefinitionAsString <- tempControlDefinition()
@@ -213,8 +224,19 @@ OptimusSA <- function(NUMITER       = 1000000,
         K      <- K.new
         Q.old  <- Q
 
+        # For starcore, find highest.coef and evaluate.
+        token <- TRUE
+        if (!is.null(starcore)) {
+          MAXCOEFORDER <- starcore['MAXCOEFORDER']
+          N.terms.old  <- length(O$coefficients)
+          highest.coef <- unlist(strsplit( format( max( abs(O$coefficients),na.rm=T ), scientific=F,trim=T) ,"")) ##-- 16Jan13 --## removes sci notation and spaces for extremely large coefficients (the absence of this never caused a problem for backbone and methyls), now also abs() is added and NAs are removed while accounting the order of coefficients!
+          dot.ind      <- which(highest.coef==".")
+          if(length(dot.ind)!=0){ Highest.order.coef.old <- dot.ind-1 } else { Highest.order.coef.old <- length(highest.coef) }
+          token <- (Highest.order.coef.old <= MAXCOEFORDER)
+        }
+
         #-- # # # # # # # # #
-        if(E.old < E.stored){
+        if(E.old < E.stored & token){
           E.stored       <- E.old
           Step.stored    <- STEP
           K.stored       <- K
@@ -223,17 +245,26 @@ OptimusSA <- function(NUMITER       = 1000000,
           DUMP.MODEL[1]  <- "QUALITY:"
           DUMP.MODEL[2]  <- paste("E: ",round(E.old,3),sep="")
           DUMP.MODEL[3]  <- paste("Q: ",round(Q.old,3),sep="")
-          #        DUMP.MODEL[4]  <- "TERMS:"
-          #        DUMP.MODEL[5]  <- paste(as.character(names(K.stored)), collapse=" ")
-          #        DUMP.MODEL[6]  <- "COEFFICIENTS:"
-          #        DUMP.MODEL[7]  <- paste(format(as.vector(K.stored), scientific=F, trim=T), collapse=" ")
-          #        DUMP.MODEL[8]  <- "OBSERVABLES:"
-          #        DUMP.MODEL[9]  <- paste(as.character(names(O.stored)), collapse=" ")
-          #        DUMP.MODEL[10] <- "PREDICTIONS:"
-          #        DUMP.MODEL[11] <- paste(format(as.vector(O.stored), scientific=F, trim=T), collapse=" ")
-          #        DUMP.MODEL[12] <- "TARGET:"
-          #        DUMP.MODEL[13] <- paste(format(as.vector(y), scientific=F, trim=T), collapse=" ")
-          #        DUMP.MODEL[14] <- "################################"
+          if (!is.null(starcore)) {
+            DUMP.MODEL[4]  <- paste("N of coef.: ",round(N.terms.old,3),sep="")
+            DUMP.MODEL[5]  <- paste("Order of largest coef.: ",Highest.order.coef.old,sep="")
+            DUMP.MODEL[6]  <- "TERMS:"
+            DUMP.MODEL[7]  <- paste(as.character(names(O$coefficients)), collapse=" ")
+            DUMP.MODEL[8]  <- "COEFFICIENTS:"
+            DUMP.MODEL[9]  <- paste(format(as.vector(O$coefficients), scientific=F, trim=T), collapse=" ") ##-- 16Jan --## removes sci notation, keeping NA
+            DUMP.MODEL[10] <- "################################"
+          }
+          # DUMP.MODEL[4]  <- "TERMS:"
+          # DUMP.MODEL[5]  <- paste(as.character(names(K.stored)), collapse=" ")
+          # DUMP.MODEL[6]  <- "COEFFICIENTS:"
+          # DUMP.MODEL[7]  <- paste(format(as.vector(K.stored), scientific=F, trim=T), collapse=" ")
+          # DUMP.MODEL[8]  <- "OBSERVABLES:"
+          # DUMP.MODEL[9]  <- paste(as.character(names(O.stored)), collapse=" ")
+          # DUMP.MODEL[10] <- "PREDICTIONS:"
+          # DUMP.MODEL[11] <- paste(format(as.vector(O.stored), scientific=F, trim=T), collapse=" ")
+          # DUMP.MODEL[12] <- "TARGET:"
+          # DUMP.MODEL[13] <- paste(format(as.vector(y), scientific=F, trim=T), collapse=" ")
+          # DUMP.MODEL[14] <- "################################"
         }
         #-- # # # # # # # # #
 
@@ -243,6 +274,10 @@ OptimusSA <- function(NUMITER       = 1000000,
       ENERGY.DE.FACTO[STEP.add] <- E.old
       Q.STRG[STEP.add]          <- Q.old
       STEP.STORED[STEP.add]     <- STEP
+      if (!is.null(starcore)) {
+        COEF.ORDER[STEP.add]    <- Highest.order.coef.old
+        N.TERMS[STEP.add]       <- N.terms.old
+      }
 
       #-- Adjusting the temperature every STATWINDOW STEP
       if((length(ACCEPTANCE)%%STATWINDOW) == 0){ #-- thus the number of entries is n*STATWINDOW
@@ -267,7 +302,7 @@ OptimusSA <- function(NUMITER       = 1000000,
       if(LIVEPLOT==TRUE){
         if(STEP%%LIVEPLOT.FREQ == 0){
 
-          pdf(width=PDFwidth, height=PDFheight, file=paste(OPTNAME,repl,".pdf",sep=""))
+          pdf(width=PDFwidth, height=PDFheight, file=paste0(DIR,'/',OPTNAME,repl,".pdf",sep=""))
           par(mfrow=c(5,1))
 
           plot(y=PROB.VEC, x=STEP.STORED, ylab="Acceptance P", xlab="Step",
@@ -296,6 +331,13 @@ OptimusSA <- function(NUMITER       = 1000000,
                xlim=range(STEP.STORED), type="l", col="blue", lwd=2)
           lines(y=range(Q.STRG), x=rep(Step.stored,2), lwd="2.5", col="green")
 
+          if (!is.null(starcore)) {
+            plot(y=N.TERMS, x=STEP.STORED, ylab="Number of Coefficients", xlab="Step", xlim=range(STEP.STORED), type="l", col="red", lwd=2)
+            lines(y=range(N.TERMS), x=rep(Step.stored,2), lwd="2.5", col="green")
+            plot(y=COEF.ORDER, x=STEP.STORED, ylab="Highest order of coef", xlab="Step", xlim=range(STEP.STORED), type="l", col="red", lwd=2)
+            lines(y=range(COEF.ORDER), x=rep(Step.stored,2), lwd="2.5", col="green")
+          }
+
           dev.off()
 
         }
@@ -304,9 +346,9 @@ OptimusSA <- function(NUMITER       = 1000000,
 
 
       if( STEP%%DUMP.FREQ == 0 & exists("DUMP.MODEL") ){
-        write(DUMP.MODEL, file=paste(OPTNAME,repl,"_model_QE.log",sep=""))
-        save(K.stored,    file=paste(OPTNAME,repl,"_model_K.Rdata",sep=""))
-        save(O.stored,    file=paste(OPTNAME,repl,"_model_O.Rdata",sep=""))
+        write(DUMP.MODEL, file=paste0(DIR,'/',OPTNAME,repl,"_model_QE.log",sep=""))
+        save(K.stored,    file=paste0(DIR,'/',OPTNAME,repl,"_model_K.Rdata",sep=""))
+        save(O.stored,    file=paste0(DIR,'/',OPTNAME,repl,"_model_O.Rdata",sep=""))
       }
 
       STEP.add <- STEP.add + 1    ########
@@ -324,6 +366,11 @@ OptimusSA <- function(NUMITER       = 1000000,
           ACC.VEC.DE.FACTO      <- ACC.VEC.DE.FACTO[(length(ACC.VEC.DE.FACTO)-(10000/STATWINDOW)+1):length(ACC.VEC.DE.FACTO)]
           STEP4ACC.VEC.DE.FACTO <- STEP4ACC.VEC.DE.FACTO[(length(STEP4ACC.VEC.DE.FACTO)-(10000/STATWINDOW)+1):length(STEP4ACC.VEC.DE.FACTO)]
           STEP.add              <- 10001
+          if (!is.null(starcore)) {
+            N.TERMS             <- N.TERMS[(length(N.TERMS)-10000+1):length(N.TERMS)]
+            COEF.ORDER          <- COEF.ORDER[(length(COEF.ORDER)-10000+1):length(COEF.ORDER)]
+          }
+
         }
       }
       #^^ # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -345,8 +392,12 @@ OptimusSA <- function(NUMITER       = 1000000,
     OUTPUT$Q.STRG                <- Q.STRG
     OUTPUT$ACCEPTANCE            <- ACCEPTANCE
     OUTPUT$STEP.STORED           <- STEP.STORED
+    if (!is.null(starcore)) {
+      OUTPUT$N.TERMS             <- N.TERMS
+      OUTPUT$COEF.ORDER          <- COEF.ORDER
+    }
 
-    save(OUTPUT, file=paste(OPTNAME,repl,"_model_ALL.Rdata", sep=""))
+    save(OUTPUT, file=paste0(DIR,'/',OPTNAME,repl,"_model_ALL.Rdata"))
   })
   #^^ PARALLEL PROCESSING WRAP # # # # # # # # #
 

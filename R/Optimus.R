@@ -94,7 +94,9 @@ Optimus <- function(NUMITER       = 1000000,
                     CYCLES        = 10,
                     ACCRATIO.IN   = 90,
                     ACCRATIO.FIN  = 0.5,
-                    OPT.TYPE = "SA"
+                    OPT.TYPE      = "SA",
+                    DIR           = './',
+                    starcore      = NULL
                     ){
   #-- Call Simulated Annealing Optimus
   if(OPT.TYPE == "SA"){
@@ -122,7 +124,9 @@ Optimus <- function(NUMITER       = 1000000,
               K.INITIAL     = K.INITIAL,
               rDEF          = rDEF,
               mDEF          = mDEF,
-              uDEF          = uDEF
+              uDEF          = uDEF,
+              DIR           = DIR,
+              starcore      = starcore
               )
   } else {
     #-- Call Replica Exchange Optimus
@@ -150,7 +154,8 @@ Optimus <- function(NUMITER       = 1000000,
                 K.INITIAL     = K.INITIAL,
                 rDEF          = rDEF,
                 mDEF          = mDEF,
-                uDEF          = uDEF
+                uDEF          = uDEF,
+                DIR           = DIR
                 )
     else
       #-- If OPT.TYPE is neither "SA" nor "RE"
