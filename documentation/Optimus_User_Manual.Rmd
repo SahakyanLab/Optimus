@@ -6,7 +6,7 @@ output: pdf_document
 references:
 - id: Raue2013
   title: Lessons Learned from Quantitative Dynamical Modeling in Systems Biology
-  author: 
+  author:
   - family: Raue
     given: Andreas
   - family: Schilling
@@ -40,7 +40,7 @@ references:
     month: 09
 - id: Ballard2009
   title: Replica exchange with nonequilibrium switches
-  author: 
+  author:
   - family: Ballard
     given: Andrew
   - family: Jarzynski
@@ -55,7 +55,7 @@ references:
     month: 07
 - id: Chen2015
   title: Generalized Metropolis acceptance criterion for hybrid non-equilibrium molecular dynamics - Monte Carlo simulations
-  author: 
+  author:
   - family: Chen
     given: Yunjie
   - family: Roux
@@ -70,7 +70,7 @@ references:
     month: 01
 - id: Chib1995
   title: Understanding the Metropolis-Hastings Algorithm
-  author: 
+  author:
   - family: Chib
     given: Siddhartha
   - family: Greenberg
@@ -99,7 +99,7 @@ references:
     year: 1996
 - id: Cowles1996
   title: "Markov Chain Monte Carlo Convergence Diagnostics: A Comparative Review"
-  author: 
+  author:
   - family: Cowles
     given: Mary
   - family: Carlin
@@ -114,7 +114,7 @@ references:
     month: 06
 - id: Kirkpatrick1983
   title: "Optimization by simulated annealing: Quantitative studies"
-  author: 
+  author:
   - family: Kirkpatrick
     given: Scott
   container-title: Journal of Statistical Physics
@@ -127,7 +127,7 @@ references:
     year: 1984
 - id: Ingber1993
   title: "Simulated Annealing: Practice versus Theory"
-  author: 
+  author:
   - family: Ingber
     given: Lester
   container-title: Mathematical and Computer Modelling
@@ -215,7 +215,7 @@ In molecular dynamics simulation, where the objective is to sample the free ener
 
 ## Acceptance Ratio Annealing Procedure
 
-A significant limitation of pseudo-temperature simulated annealing is that a given scheme of temperature annealing might be efficient for some models or pseudo-energy metrics, but not efficient for others [@Ingber1993]. A temperature at a given point of the annealing cycle that is designed to be quite permissive in terms of accepting the move, can actually not be permissive depending on the value and scale of the ${\Delta}E$ energy difference, as can be seen in the equation for $p_{accept}$. Furthermore, even within the single model optimisation procedure, the pseudo-energy metric can shift into a value range that does not match with the selected temperature scheme anymore, leading to similar problems (meaning poor sampling of the parameter space). This can often be the case when the pseudo-energy of the system does not exhibit a smooth dependency on $K$, loosely meaning that similar values of $K$ do not necessarily produce similar pseudo-energy values. 
+A significant limitation of pseudo-temperature simulated annealing is that a given scheme of temperature annealing might be efficient for some models or pseudo-energy metrics, but not efficient for others [@Ingber1993]. A temperature at a given point of the annealing cycle that is designed to be quite permissive in terms of accepting the move, can actually not be permissive depending on the value and scale of the ${\Delta}E$ energy difference, as can be seen in the equation for $p_{accept}$. Furthermore, even within the single model optimisation procedure, the pseudo-energy metric can shift into a value range that does not match with the selected temperature scheme anymore, leading to similar problems (meaning poor sampling of the parameter space). This can often be the case when the pseudo-energy of the system does not exhibit a smooth dependency on $K$, loosely meaning that similar values of $K$ do not necessarily produce similar pseudo-energy values.
 
 To this end, in general cases where we do not deal with energies and temperatures that display the smoothness emulating real physical systems (such smoothness is often found in molecular dynamics or Monte Carlo simulations of molecules), we need to anneal a more robust metric for crossing different barriers. As such a metric, Optimus, when in its default mode, uses the acceptance ratio.
 
@@ -548,7 +548,7 @@ lines(x=sort(x), y=predict(newdata=data.frame(x=sort(x)), object=lm.model), col=
 
 ## Defining Optimus Inputs
 
-Let us first define an ordered set $terms$ that is a collection of candidate terms to include in the representation of the data: 
+Let us first define an ordered set $terms$ that is a collection of candidate terms to include in the representation of the data:
 
 $terms = \{x,\:x^2,\:x^3,\:x^4,\:x^5,\:x^6,\:x^7,\:x^8,\:x^9,\:x^{10},\:e^x,\:|x|,\:sin(x), \:cos(x),\:tan(x),\:sin(x)cos(x),\:sin^2(x),\:cos^2(x),$
 $sin(x^2),\:sin(x^3),\:cos(x^2),\:cos(x^3),\:sin(x^3)cos(-x),\:cos(x^3)sin(-x), \:sin(x^5)cos(-x),\:cos(x^5)sin(-x),\:e^xsin(x),$
@@ -558,7 +558,7 @@ Let $terms_i$ denote the $i^{th}$ term in the set $terms$ (for example, $terms_{
 
 $$
 y = b + \sum_{i=1}^{\mathbf{card}(terms)} k_ic_iterms_i
-$$ 
+$$
 
 where each $k_i$ is a binary variable (meaning a variable taking a value of either 0 or 1) indicating whether the $i^{th}$ term is included in the representation, each $c_i$ is a non-zero coefficient for the $i^{th}$ term and b is a real number (the intercept). In our case, $\mathbf{card}(terms) = 30$ so explicitly, our model is:
 
@@ -641,7 +641,7 @@ m <- function(K, DATA){
              "+I(exp(x)*cos(x))",
              "+I(abs(x)*sin(x))",
              "+I(abs(x)*cos(x))")
-  
+
   ind.terms <- which(K == 1)
   if(length(ind.terms)!=0){
     equation <- paste(c("y~",terms[ind.terms]), collapse="")
@@ -679,7 +679,7 @@ u <- function(O, DATA){
 }
 ```
 
-Finally, we need to define the rule function $r$. We will adopt the following simply procedure: randomly select an entry in $K$ and switch its value to the other binary value. 
+Finally, we need to define the rule function $r$. We will adopt the following simply procedure: randomly select an entry in $K$ and switch its value to the other binary value.
 
 ```{r, tidy=TRUE, echo=TRUE, eval=TRUE}
 r <- function(K){
@@ -854,7 +854,7 @@ Least Squares(Tutorial 1):
 
 $$y = c_1x+c_2x^2+c_3x^3+c_4x^4$$
 
-Optimus (Acceptance Ratio Annealing): 
+Optimus (Acceptance Ratio Annealing):
 
 $$y = b+c_2x^2+c_3x^3+c_4x^4+c_{11}e^x+c_{20}sin(x^3)+c_{26}cos(x^5)sin(-x)$$
 
@@ -876,7 +876,7 @@ This is the molecular structure of Vitamin C:
 
 ```{r, tidy = TRUE, eval = TRUE, echo = FALSE, fig.align='center'}
 library(knitr)
-include_graphics("example_3/generate_vitC_example_snapshots/VitaminC_structure_NoAngle")
+include_graphics("example_3/generate_vitC_example_snapshots/VitaminC_structure_NoAngle.png")
 ```
 
 Free rotation is possible around two sigma bonds in this structure: the bond joining carbon 3 and 6, and the bond joining carbon 6 and 10. The ground state conformation of Vitamin C will be a conformation such that steric clash between the constituent members bonded to the freely rotating bonds is minimized while also allowing for close proximity between hydrogen bond donating and hydrogen bond accepting groups. In the following sections, we formalize this optimisation problem and use Optimus to arrive at the solution.
@@ -887,8 +887,8 @@ As in the previous Tutorials, we must first rigorously define the parameters whi
 
 ```{r, tidy = TRUE, eval = TRUE, echo = FALSE, fig.align='center'}
 library(knitr)
-include_graphics("example_3/generate_vitC_example_snapshots/conf1")
-include_graphics("example_3/generate_vitC_example_snapshots/Newman_180_180")
+include_graphics("example_3/generate_vitC_example_snapshots/conf1.png")
+include_graphics("example_3/generate_vitC_example_snapshots/Newman_180_180.PNG")
 ```
 In the 3D structure, grey denoted Carbon, red denotes Oxygen and white denoted Hydrogen.
 
@@ -904,15 +904,15 @@ Note that to avoid non convergence issues when calling MOPAC, $m()$ returns a de
 
 ```{r, tidy=FALSE, echo=TRUE, eval=TRUE}
 m <- function(K, DATA = NULL){
-  
+
   notconvergedE = -100.00
   # this should be your local path to MOPAC
   mopac.cmd="/home/group/prog/mopac2016/MOPAC2016.exe"
   clean = TRUE
-  
+
   # MOPAC semiempirical QM input file preparation, with given PHI and PSI
   # dihedral angles.
-  
+
   geo <- c(
     "RHF PM6 EF GEO-OK MMOK T=10 THREADS=1",
     "Vitamin C with two controllable dihedral angles psi(7,6,3,1) and phi(11,10,6,7)",
@@ -939,7 +939,7 @@ m <- function(K, DATA = NULL){
     "O     1.18961787  1  136.9144035  1   -0.6060924  1    19    16    17",
     "  "
   )
-  
+
   # Submitting the MOPAC optimisation job, where all the spatial parameters
   # are relaxed except the pre-set PHI and PSI angles. The job is run requesting
   # maximum 10 seconds of time limitation. Most (if not all) complete within
@@ -947,7 +947,7 @@ m <- function(K, DATA = NULL){
   random.id <- as.character(sample(size=1, x=1:10000000))
   write(geo, file=paste0(random.id,".mop"))
   system(paste0(mopac.cmd," ",random.id,".mop"))
-  
+
   if( file.exists(paste0(random.id,".arc")) ){
     e.line <- grep("HEAT OF FORMATION",
                    readLines(paste0(random.id,".arc")),
@@ -957,11 +957,11 @@ m <- function(K, DATA = NULL){
   } else {
     O <- notconvergedE
   }
-  
+
   if(clean){
     file.remove(grep(random.id, dir(), value=TRUE))
   }
-  
+
   return(O) # heat of formation in kcal/mol
 }
 ```
@@ -989,16 +989,16 @@ r <- function(K){
   # Altering that term by either +alter.by or -alter.by
   K.new[K.ind.toalter] <-
     K.new[K.ind.toalter] + sample(size=1, x=c(alter.by, -alter.by))
-  
+
   # Setting the dihedral angles to be always within the -180 to 180 range.
   if( K.new[K.ind.toalter] > 180.0 ){
     K.new[K.ind.toalter] <- K.new[K.ind.toalter] - 360
   }
-  
+
   if( K.new[K.ind.toalter] < -180.0 ){
     K.new[K.ind.toalter] <- K.new[K.ind.toalter] + 360
   }
-  
+
   return(K.new)
 }
 ```
@@ -1050,8 +1050,8 @@ Processors 1, 3 and 4 all arrived at a conformation defined by $\{\phi = 50, \ps
 
 ```{r, tidy = TRUE, eval = TRUE, echo = FALSE, fig.align='center'}
 library(knitr)
-include_graphics("example_3/generate_vitC_example_snapshots/conf2")
-include_graphics("example_3/generate_vitC_example_snapshots/Newman_50_188")
+include_graphics("example_3/generate_vitC_example_snapshots/conf2.png")
+include_graphics("example_3/generate_vitC_example_snapshots/Newman_50_188.PNG")
 ```
 
 This conformation is equivalent to benchmark Conformation 2. Thus, in this example, Acceptance Ratio Annealing was able to find the Vitamin C conformation with the second lowest energy in the parameter space. This performance is strong, especially given that the energy difference between Conformation 1 and Conformation 2 is only -0.329 kcal/mol.
@@ -1115,8 +1115,8 @@ Of the 12 replicas, Processor 4 recovered the conformation with the lowest energ
 
 ```{r, tidy = TRUE, eval = TRUE, echo = FALSE, fig.align='center'}
 library(knitr)
-include_graphics("example_3/generate_vitC_example_snapshots/conf3")
-include_graphics("example_3/generate_vitC_example_snapshots/Newman_90_76")
+include_graphics("example_3/generate_vitC_example_snapshots/conf3.png")
+include_graphics("example_3/generate_vitC_example_snapshots/Newman_90_76.PNG")
 ```
 
 This solution corresponds to reference Conformation 1, the global minimum energy state for Vitamin C. Thus, for this optimisation problem, the Replica Exchange version of Optimus outperformed Acceptance Ratio Annealing by succeeding in finding the global minimum of the energy landscape while the latter version found only the second lowest local energy minimum.
@@ -1170,17 +1170,17 @@ This Tutorial will demonstrate the use of Optimus to address a problem from yet 
 
 ```{r, tidy = TRUE, eval = TRUE, echo = FALSE, fig.align='center'}
 library(knitr)
-include_graphics("example_4/Network")
+include_graphics("example_4/Network.PNG")
 ```
 
 Under normal circumstances, the transmembrane protein Sln1, which is present as a dimer, autophosphorylates at a histidine residue (consuming ATP). The phosphate group is then transferred to an aspartate residue of Sln1. Thereafter, the phosphate is transferred to the protein Ypd1 and finally to the protein Ssk1. Ssk1 is continuously dephosphortylated to give an output signal. The signalling pathway is inhibitted by an increase is osmolarity outside of the cell [@SystemsBio]. If we let $A$ represent Sln1, $B$ represent Ypd1, $C$ represent Ssk1 and $XP$ represent the phophorylated form of protein $X$, then the above network can be represented by the below schematic [@SystemsBio]:
 
 ```{r, tidy = TRUE, eval = TRUE, echo = FALSE, fig.align='center'}
 library(knitr)
-include_graphics("example_4/NetworkAbstracted")
+include_graphics("example_4/NetworkAbstracted.PNG")
 ```
 
-where each $k_i$ represents the rate constant for the relevant phosphorylation/dephosphorylation reaction. 
+where each $k_i$ represents the rate constant for the relevant phosphorylation/dephosphorylation reaction.
 
 The above graphic allows us to arrive at the following equations to describe the temporal behavior of the phosphorelay system:
 
@@ -1218,7 +1218,7 @@ In order to determine the steady state behavior of the ODE system, we will emplo
 
 ```{r, tidy=FALSE, echo=TRUE, eval=TRUE}
 model <- function(t, state, K){
-  
+
   with( as.list(c(state, K)), {
     # rate of change
     dcA  <- -k1*cA+k2*cAP*cB
@@ -1259,7 +1259,7 @@ library(deSolve)
 m <- function(K, DATA){
   state <- DATA$state
   model <- DATA$model
-  
+
   span = 10.0
 
   times <- c(0, span)
@@ -1268,7 +1268,7 @@ m <- function(K, DATA){
 }
 ```
 
-Recall that the function $u()$ must return an energy $E$ and a quality $Q$ of the candidate solution. Here, $u()$ will set both $E$ and $Q$ to be the RMSD between the steady state concentrations of the network correponding to the current set of rate constants $K$, as determined by $m()$, and the target concentrations. 
+Recall that the function $u()$ must return an energy $E$ and a quality $Q$ of the candidate solution. Here, $u()$ will set both $E$ and $Q$ to be the RMSD between the steady state concentrations of the network correponding to the current set of rate constants $K$, as determined by $m()$, and the target concentrations.
 
 ```{r, tidy=FALSE, echo=TRUE, eval=TRUE}
 u <- function(O, DATA){
@@ -1292,11 +1292,11 @@ r <- function(K){
   # by either +move.step or -move.step, also randomly selected:
   move.step <- 0.0002
   K.new[K.ind.toalter] <- K.new[K.ind.toalter] + sample(size=1, x=c(-move.step, move.step))
-  
+
   ## Setting the negative coefficients to 0
   neg.ind <- which(K.new < 0)
   if(length(neg.ind)>0){ K.new[neg.ind] <- 0 }
-  
+
   return(K.new)
 }
 ```
@@ -1509,7 +1509,7 @@ kable(data, caption = "Summary of Recovered Rate Constants")
 
 \newpage
 
-# Tutorial 5: Shuffling a set of genomic contacts to form a new set 
+# Tutorial 5: Shuffling a set of genomic contacts to form a new set
 
 ## Problem Statement
 
@@ -1535,8 +1535,8 @@ Take note that our set of contacts complies with the following criteria:
 
   1. The set only contains **unique, long-range contacts**, with $i$ and $j$ regions always separated by greater than 2 megabases/Mb. In terms of integer, the threshold is 50 ($2 Mb/40 kb = 50$), such that $j-i > 50$.
 
-  2. $i$ is set to be always less than $j$. This avoids duplicate contacts in the set, such as 
-  
+  2. $i$ is set to be always less than $j$. This avoids duplicate contacts in the set, such as
+
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
 library(knitr)
 dup.mx <- cbind(c(181,273), c(273, 181))
@@ -1544,15 +1544,15 @@ colnames(dup.mx) <- c("i", "j")
 dup.mx
 ```
 
-  3. A region can take part in more than one contact (as in region 96 in rows 1 and 2 in the table above), given that the contacts it forms comply with the two aforementioned criteria. 
-  
+  3. A region can take part in more than one contact (as in region 96 in rows 1 and 2 in the table above), given that the contacts it forms comply with the two aforementioned criteria.
+
 **The task is to take the DNA regions from the original set (shown above) and to shuffle them to produce a new set of contacts. This is useful for specific research on genomic 3D contacts requiring good quality negative controls. The challenge here is to maximise the number of new contacts that are valid, meaning that they (A) still satisfy the aforementioned criteria and (B) are not present in the original set.**
 
 ## Defining Optimus Inputs
 
 Now, we solve the problem using Optimus by doing the following:
 
-1. Keeping the original order of $i$'s in the original set (referred hereinafter as IJ.ORIG), randomly shuffle once all $j$'s without replacement. The output will be object $K$ to be supplied to Optimus(). 
+1. Keeping the original order of $i$'s in the original set (referred hereinafter as IJ.ORIG), randomly shuffle once all $j$'s without replacement. The output will be object $K$ to be supplied to Optimus().
 
 ```{r, tidy=TRUE, echo=TRUE, eval=FALSE}
 K <- IJ.ORIG
@@ -1561,13 +1561,13 @@ K[,"j"] <- sample(x=K[,"j"], size=nrow(K), replace=FALSE)
 ```
 2. Define the rest of Optimus inputs:
 
-The $m$() function should operate on the object $K$, which is the original set of contacts with all j's shuffled once (from Step 1). It can also accept a supplementary object $DATA$ that holds data necessary for its calculations or comparisons. Output of $m$() is the observable object $O$ that is the percentage of contacts not satisfying the aforementioned criteria or are already in the original set. To get $O$, $m$() will require the following additional data: a. original set of contacts (IJ.ORIG), b. number of contacts, and c. gap threshold set between contacting regions in terms of positive integer (50). These are stored in the $DATA$ object that is supplied to $m$(). 
+The $m$() function should operate on the object $K$, which is the original set of contacts with all j's shuffled once (from Step 1). It can also accept a supplementary object $DATA$ that holds data necessary for its calculations or comparisons. Output of $m$() is the observable object $O$ that is the percentage of contacts not satisfying the aforementioned criteria or are already in the original set. To get $O$, $m$() will require the following additional data: a. original set of contacts (IJ.ORIG), b. number of contacts, and c. gap threshold set between contacting regions in terms of positive integer (50). These are stored in the $DATA$ object that is supplied to $m$().
 
 ```{r, tidy=FALSE, echo=TRUE, eval=FALSE}
 DATA <- NULL
 DATA$IJ.ORIG <- IJ.ORIG
 DATA$gaplimit <- 50
-DATA$numContacts <- 173 
+DATA$numContacts <- 173
 
 m <- function(K, DATA){
   # Total number of erroneous contacts in the new set
@@ -1585,7 +1585,7 @@ m <- function(K, DATA){
 }
 ```
 
-Dictated by the $u$() function, the error percentage, $O$, will be directly used as the pseudo-energy, $E$, since we do want to minimise this value. Meanwhile, the $K$ snapshot quality, $Q$, which we want to improve, can be the negative of $O$. 
+Dictated by the $u$() function, the error percentage, $O$, will be directly used as the pseudo-energy, $E$, since we do want to minimise this value. Meanwhile, the $K$ snapshot quality, $Q$, which we want to improve, can be the negative of $O$.
 
 ```{r, tidy=TRUE, echo=TRUE, eval=FALSE}
 u <- function(O){
@@ -1596,7 +1596,7 @@ u <- function(O){
 }
 ```
 
-Finally, $r$(), which defines how object $K$ will be altered at every iteration, takes two $j$'s and then swaps them, without changing the order of their partner $i$'s. 
+Finally, $r$(), which defines how object $K$ will be altered at every iteration, takes two $j$'s and then swaps them, without changing the order of their partner $i$'s.
 
 ```{r, tidy=TRUE, echo=TRUE, eval=FALSE}
 r <- function(K){
@@ -1609,17 +1609,17 @@ r <- function(K){
 }
 ```
 3. Perform acceptance ratio annealing and replica exchange Optimus runs.
-  
+
 ## Acceptance Ratio Annealing Optimus Run
 
 We first use the Acceptance Ratio Annealing Optimus to solve the problem. As in Tutorials 2 and 4, Optimus is set to do 200 000 iterations, 2 annealing cycles and to produce 4 replicas of the same simulations.
 
 ```{r, tidy=TRUE, echo=TRUE, eval=FALSE}
 Optimus(NCPU = 4, K.INITIAL = K, rDEF = r, mDEF = m, uDEF = u, OPT.TYPE = "SA",
-        OPTNAME = "IJ.NEW.OPTI.SA", DATA = DATA, NUMITER = 2e+05, CYCLES = 2, 
+        OPTNAME = "IJ.NEW.OPTI.SA", DATA = DATA, NUMITER = 2e+05, CYCLES = 2,
         DUMP.FREQ = 1e+05, LONG = FALSE)
 ```
-Note that if additional data is required by $m$(), that object should be assigned to $DATA$ argument of Optimus(), otherwise $DATA$ defaults to NULL. 
+Note that if additional data is required by $m$(), that object should be assigned to $DATA$ argument of Optimus(), otherwise $DATA$ defaults to NULL.
 
 The 4 new sets obtained have the following error percentages:
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
@@ -1651,11 +1651,11 @@ colnames(data) <- c("Set", "Replica Acceptance Ratio", "%")
 kable(data, caption = "OPTIMUS RE: % of Erroneous Contacts")
 ```
 
-Notably, none of the 12 new sets of contacts from the replica exchange run are better than the sets produced by the acceptance ratio annealing Optimus. 
+Notably, none of the 12 new sets of contacts from the replica exchange run are better than the sets produced by the acceptance ratio annealing Optimus.
 
 ## Summary
 
-We have added yet another one to the diverse applications of Optimus, this time by performing a basic shuffling of pairs of positive integers that, in this case, represent contacts between DNA regions, to form a new set of contacts. Additionally, Optimus showed to be a platform, where certain restrictions or conditions can easily be incorporated to a given task, which usually is required for specific research objectives. The table below shows the % of erroneous contacts of the best outputs from the acceptance ratio annealing and replica exchange Optimus runs, with the former producing the better set with 650 valid contacts out of the 734 total number of original contacts. 
+We have added yet another one to the diverse applications of Optimus, this time by performing a basic shuffling of pairs of positive integers that, in this case, represent contacts between DNA regions, to form a new set of contacts. Additionally, Optimus showed to be a platform, where certain restrictions or conditions can easily be incorporated to a given task, which usually is required for specific research objectives. The table below shows the % of erroneous contacts of the best outputs from the acceptance ratio annealing and replica exchange Optimus runs, with the former producing the better set with 650 valid contacts out of the 734 total number of original contacts.
 ```{r, tidy=TRUE, echo=FALSE, eval=TRUE}
 name.v <- c("Optimus (Acceptance Ratio Annealing)", "Optimus (Replica Exchange)")
 data <- cbind(name.v, c(11.4441, 17.8474))
@@ -1798,6 +1798,14 @@ DATA is a variable of type list holding any additional data that must be accesse
 ### OPT.TYPE
 
 OPT.TYPE is a variable of type character which specifies the mode of Optimus to execute and should always be equal to "SA" or "RE". If equal to "SA" (for Simulated Annealing), the Acceptance Ratio Annealing version of Optimus will be executed. If equal to "RE" (for Replica Exchange), the Replica Exchange version of Optimus will be executed. The default value of OPT.TYPE is "SA".
+
+### DIR
+
+DIR is a variable of type character which specifies the directory to save the Optimus outputs. The default value for DIR is '.' which means the current directory while running Optimus.
+
+### starcore
+
+starcore is a variable of type list holding some parameters for in-lab starcore use only. For example, starcore can be c('MAXCOEFORDER'=4) which will specify the maximum coefficient order. The default value for starcore is NULL which means the in-lab use of starcore is not activated.
 
 ## Acceptance Ratio Annealing Specific Optional Inputs
 
